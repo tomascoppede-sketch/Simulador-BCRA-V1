@@ -11,8 +11,8 @@
   --sup:#1E7840; --red:#C0392B; --warn:#D4841A; --bdr:rgba(200,160,64,0.2);
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-html,body{height:100%;font-family:Cambria,Georgia,serif;background:var(--inst);color:var(--perg);font-size:13px;}
-body{overflow:hidden;}
+html,body{height:100%;font-family:Cambria,Georgia,serif;background:var(--inst);color:var(--perg);font-size:13px;-webkit-text-size-adjust:100%;}
+body{overflow:hidden;-webkit-tap-highlight-color:rgba(0,0,0,0);}
 
 /* ── SCREENS ── */
 .screen{display:none;}
@@ -29,7 +29,7 @@ body{overflow:hidden;}
 .i-rule{width:48px;height:1px;background:var(–gold);margin:0 auto 20px;}
 .i-copy{max-width:420px;font-size:13px;line-height:1.8;color:rgba(232,212,154,0.7);margin-bottom:28px;}
 .i-copy strong{color:var(–perg);}
-.btn-main{font-family:Georgia,serif;font-size:13px;letter-spacing:4px;text-transform:uppercase;font-weight:bold;padding:14px 48px;background:var(–gold);color:var(–inst);border:none;cursor:pointer;transition:background .2s;}
+.btn-main{font-family:Georgia,serif;font-size:13px;letter-spacing:4px;text-transform:uppercase;font-weight:bold;padding:18px 52px;background:var(–gold);color:var(–inst);border:none;cursor:pointer;transition:background .2s;-webkit-appearance:none;touch-action:manipulation;min-height:50px;display:block;width:80%;max-width:320px;}
 .btn-main:hover{background:var(–perg);}
 .i-foot{margin-top:14px;font-family:Consolas,monospace;font-size:9px;color:rgba(232,212,154,0.22);letter-spacing:1px;}
 .i-credit{margin-top:8px;font-family:Georgia,serif;font-size:15px;color:rgba(232,212,154,0.55);letter-spacing:1px;}
@@ -1137,6 +1137,7 @@ setTimeout(function(){el.parentNode&&el.parentNode.removeChild(el);},3500);
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 document.getElementById(‘btn-start’).addEventListener(‘click’,startGame);
+document.getElementById(‘btn-start’).addEventListener(‘touchend’,function(e){e.preventDefault();startGame();});
 document.getElementById(‘btn-new’).addEventListener(‘click’,startGame);
 document.getElementById(‘btn-mnu’).addEventListener(‘click’,function(){showScreen(‘screen-intro’);});
 document.getElementById(‘btn-aj’).addEventListener(‘click’,function(){pedirReforma(‘ajuste’);});
