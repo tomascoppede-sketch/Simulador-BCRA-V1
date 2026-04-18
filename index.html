@@ -3,281 +3,375 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>BCRA Simulator — Tomas Coppede</title>
+<title>BCRA Simulator — Tomás Coppedé</title>
 <style>
+/* ── VARIABLES ── */
 :root {
-  --inst:#0D2B5E; --bcra:#1A4B8C; --gold:#C8A040; --perg:#E8D49A;
-  --sup:#1E7840; --red:#C0392B; --warn:#D4841A; --bdr:rgba(200,160,64,0.2);
+  --inst: #0D2B5E;
+  --bcra: #1A4B8C;
+  --gold: #C8A040;
+  --perg: #E8D49A;
+  --sup:  #1E7840;
+  --red:  #C0392B;
+  --warn: #D4841A;
+  --bdr:  rgba(200,160,64,0.2);
 }
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-html,body{height:100%;font-family:Cambria,Georgia,serif;background:var(--inst);color:var(--perg);font-size:13px;-webkit-text-size-adjust:100%;}
-body{overflow:hidden;-webkit-tap-highlight-color:rgba(0,0,0,0);}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html, body { height:100%; font-family:Cambria,Georgia,serif; background:var(--inst); color:var(--perg); font-size:13px; -webkit-text-size-adjust:100%; }
+body { overflow:hidden; }
+button { -webkit-appearance:none; touch-action:manipulation; cursor:pointer; }
 
 /* ── SCREENS ── */
-.screen{display:none;}
-#screen-intro.active{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:32px 20px;text-align:center;background:linear-gradient(155deg,#08142a 0%,#0D2B5E 60%,#08142a 100%);overflow-y:auto;position:relative;z-index:10;}
-#screen-game.active{display:grid;grid-template-rows:auto auto 1fr;height:100vh;overflow:hidden;}
-#screen-end.active{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:32px 20px;text-align:center;background:linear-gradient(155deg,#060e06 0%,#0D2B5E 100%);overflow-y:auto;}
+.screen { display:none; }
+#s-intro.active {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  min-height:100vh; padding:32px 20px; text-align:center; overflow-y:auto;
+  background:linear-gradient(155deg,#08142a 0%,#0D2B5E 60%,#08142a 100%);
+}
+#s-game.active {
+  display:grid; grid-template-rows:auto auto 1fr;
+  height:100vh; overflow:hidden;
+}
+#s-end.active {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  min-height:100vh; padding:32px 20px; text-align:center; overflow-y:auto;
+  background:linear-gradient(155deg,#060e06 0%,#0D2B5E 100%);
+}
 
 /* ── INTRO ── */
-.i-seal{width:90px;height:90px;border-radius:50%;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:40px;margin-bottom:18px;background:rgba(26,75,140,0.4);box-shadow:0 0 0 8px rgba(200,160,64,0.08);}
-.i-eye{font-family:Consolas,monospace;font-size:9px;letter-spacing:5px;color:rgba(200,160,64,0.6);text-transform:uppercase;margin-bottom:10px;}
-.i-title{font-family:Georgia,serif;font-size:clamp(48px,11vw,100px);font-weight:bold;letter-spacing:8px;color:var(--perg);line-height:0.9;margin-bottom:5px;}
-.i-sub{font-family:Consolas,monospace;font-size:11px;letter-spacing:6px;color:var(--gold);text-transform:uppercase;margin-bottom:4px;}
-.i-tag{font-family:Georgia,serif;font-style:italic;font-size:14px;color:rgba(232,212,154,0.5);margin-bottom:24px;}
-.i-rule{width:48px;height:1px;background:var(--gold);margin:0 auto 20px;}
-.i-copy{max-width:420px;font-size:13px;line-height:1.8;color:rgba(232,212,154,0.7);margin-bottom:28px;}
-.i-copy strong{color:var(--perg);}
-.btn-main{font-family:Georgia,serif;font-size:16px;letter-spacing:4px;text-transform:uppercase;font-weight:bold;padding:20px 52px;background:var(--gold);color:var(--inst);border:none;cursor:pointer;transition:background .2s;-webkit-appearance:none;touch-action:manipulation;min-height:56px;display:block;width:85%;max-width:340px;position:relative;z-index:20;pointer-events:auto;text-decoration:none;text-align:center;-webkit-user-select:none;user-select:none;}
-.btn-main:hover{background:var(--perg);}
-.i-foot{margin-top:14px;font-family:Consolas,monospace;font-size:9px;color:rgba(232,212,154,0.22);letter-spacing:1px;position:relative;z-index:5;}
-.i-credit{margin-top:8px;font-family:Georgia,serif;font-size:15px;color:rgba(232,212,154,0.55);letter-spacing:1px;}
-.i-credit strong{color:var(--gold);font-size:17px;}
+.i-seal { width:90px; height:90px; border-radius:50%; border:2px solid var(--gold); display:flex; align-items:center; justify-content:center; font-size:40px; margin-bottom:18px; background:rgba(26,75,140,0.4); }
+.i-eye  { font-family:Consolas,monospace; font-size:9px; letter-spacing:5px; color:rgba(200,160,64,0.6); text-transform:uppercase; margin-bottom:10px; }
+.i-title { font-family:Georgia,serif; font-size:clamp(48px,11vw,100px); font-weight:bold; letter-spacing:8px; color:var(--perg); line-height:0.9; margin-bottom:5px; }
+.i-sub  { font-family:Consolas,monospace; font-size:11px; letter-spacing:6px; color:var(--gold); text-transform:uppercase; margin-bottom:4px; }
+.i-tag  { font-family:Georgia,serif; font-style:italic; font-size:14px; color:rgba(232,212,154,0.5); margin-bottom:24px; }
+.i-rule { width:48px; height:1px; background:var(--gold); margin:0 auto 20px; }
+.i-credit { font-family:Georgia,serif; font-size:15px; color:rgba(232,212,154,0.55); margin-top:12px; }
+.i-credit strong { color:var(--gold); font-size:17px; }
+.i-foot { font-family:Consolas,monospace; font-size:9px; color:rgba(232,212,154,0.2); margin-top:6px; letter-spacing:1px; }
+
+/* ── ONBOARDING ── */
+.onboard { width:100%; max-width:480px; margin-bottom:28px; }
+.ob-field { margin-bottom:18px; }
+.ob-label { font-family:Consolas,monospace; font-size:9px; letter-spacing:3px; text-transform:uppercase; color:rgba(200,160,64,0.6); display:block; margin-bottom:8px; }
+.ob-input { width:100%; background:rgba(26,75,140,0.4); border:1px solid var(--bdr); color:var(--perg); font-family:Georgia,serif; font-size:16px; padding:10px 14px; outline:none; }
+.ob-input::placeholder { color:rgba(232,212,154,0.3); }
+.ob-input:focus { border-color:var(--gold); }
+.ob-tipos { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.btn-tipo { background:rgba(26,75,140,0.3); border:1px solid var(--bdr); padding:10px 12px; text-align:left; transition:all .15s; }
+.btn-tipo.sel { background:rgba(200,160,64,0.2); border-color:var(--gold); }
+.tipo-nm  { font-family:Georgia,serif; font-size:13px; font-weight:bold; color:var(--perg); display:block; margin-bottom:3px; }
+.tipo-desc { font-family:Cambria,serif; font-size:10px; color:rgba(232,212,154,0.5); line-height:1.4; display:block; }
+
+/* ── BTN MAIN ── */
+.btn-main { font-family:Georgia,serif; font-size:15px; letter-spacing:4px; text-transform:uppercase; font-weight:bold; padding:18px 52px; background:var(--gold); color:var(--inst); border:none; display:block; width:85%; max-width:340px; text-align:center; }
+.btn-main:hover { background:var(--perg); }
 
 /* ── GAME HEADER ── */
-.g-hdr{background:var(--inst);border-bottom:2px solid var(--gold);padding:6px 14px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;gap:8px;}
-.g-logo{font-family:Georgia,serif;font-weight:bold;font-size:14px;letter-spacing:3px;white-space:nowrap;}
-.g-logo span{color:var(--gold);}
-.g-date{font-family:Consolas,monospace;font-size:11px;color:var(--gold);letter-spacing:2px;}
-.g-turn{font-family:Consolas,monospace;font-size:9px;color:rgba(232,212,154,0.4);letter-spacing:1px;text-align:right;}
+.g-hdr { background:var(--inst); border-bottom:2px solid var(--gold); padding:6px 14px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+.g-logo { font-family:Georgia,serif; font-weight:bold; font-size:14px; letter-spacing:3px; }
+.g-logo span { color:var(--gold); }
+.g-date { font-family:Consolas,monospace; font-size:11px; color:var(--gold); letter-spacing:2px; }
+.g-turn { font-family:Consolas,monospace; font-size:9px; color:rgba(232,212,154,0.4); }
 
 /* ── TICKER ── */
-.ticker{height:22px;background:var(--bcra);border-bottom:1px solid var(--bdr);overflow:hidden;display:flex;align-items:center;flex-shrink:0;}
-.ticker-inner{display:flex;gap:36px;white-space:nowrap;animation:tick 35s linear infinite;padding-left:100%;}
-@keyframes tick{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-.ti{font-family:Consolas,monospace;font-size:9px;display:flex;gap:5px;}
-.tl{color:rgba(232,212,154,0.35);text-transform:uppercase;}
-.tv{font-weight:bold;}
-.tg{color:#6fcf97;}.tr{color:#eb5757;}.tw{color:#f2994a;}
+.ticker { height:22px; background:var(--bcra); border-bottom:1px solid var(--bdr); overflow:hidden; display:flex; align-items:center; flex-shrink:0; }
+.ticker-inner { display:flex; gap:36px; white-space:nowrap; animation:tick 40s linear infinite; padding-left:100%; }
+@keyframes tick { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+.ti { font-family:Consolas,monospace; font-size:9px; display:flex; gap:5px; }
+.tl { color:rgba(232,212,154,0.35); text-transform:uppercase; }
+.tv { font-weight:bold; }
+.tg { color:#6fcf97; } .tr { color:#eb5757; } .tw { color:#f2994a; }
 
-/* ── MAIN GRID (desktop: 4 cols, mobile: 1 col scrollable) ── */
-.g-main{display:grid;grid-template-columns:200px 1fr 1fr 220px;overflow:hidden;min-height:0;}
-.gcol{overflow-y:auto;border-right:1px solid var(--bdr);display:flex;flex-direction:column;}
-.gcol:last-child{border-right:none;}
+/* ── GAME GRID (4 cols desktop) ── */
+.g-main { display:grid; grid-template-columns:200px 1fr 1fr 220px; overflow:hidden; min-height:0; }
+.gcol { overflow-y:auto; border-right:1px solid var(--bdr); display:flex; flex-direction:column; }
+.gcol:last-child { border-right:none; }
 
 /* ── PANEL ── */
-.pnl{border-bottom:1px solid var(--bdr);padding:8px 10px;flex-shrink:0;}
-.pnl-ttl{font-family:Consolas,monospace;font-size:7px;letter-spacing:3px;text-transform:uppercase;color:rgba(200,160,64,0.4);margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid rgba(200,160,64,0.08);}
+.pnl { border-bottom:1px solid var(--bdr); padding:8px 10px; flex-shrink:0; }
+.pnl-ttl { font-family:Consolas,monospace; font-size:7px; letter-spacing:3px; text-transform:uppercase; color:rgba(200,160,64,0.4); margin-bottom:6px; padding-bottom:4px; border-bottom:1px solid rgba(200,160,64,0.08); }
 
 /* ── KPIs ── */
-.kpi-list{display:flex;flex-direction:column;gap:3px;}
-.kpi{background:rgba(26,75,140,0.3);border-left:2px solid #6B7280;padding:4px 7px;}
-.kpi.ok{border-left-color:var(--sup);}.kpi.wn{border-left-color:var(--warn);}.kpi.bd{border-left-color:var(--red);}
-.kpi-nm{font-family:Consolas,monospace;font-size:7px;letter-spacing:1px;text-transform:uppercase;color:rgba(232,212,154,0.4);}
-.kpi-v{font-family:Consolas,monospace;font-size:13px;font-weight:bold;}
-.kpi-v.ok{color:#6fcf97;}.kpi-v.wn{color:#f2994a;}.kpi-v.bd{color:#eb5757;}
-.kpi-s{font-family:Consolas,monospace;font-size:7px;color:rgba(232,212,154,0.3);margin-top:1px;}
+.kpi-list { display:flex; flex-direction:column; gap:3px; }
+.kpi { background:rgba(26,75,140,0.3); border-left:2px solid #6B7280; padding:4px 7px; }
+.kpi.ok { border-left-color:var(--sup); } .kpi.wn { border-left-color:var(--warn); } .kpi.bd { border-left-color:var(--red); }
+.kpi-nm { font-family:Consolas,monospace; font-size:7px; letter-spacing:1px; text-transform:uppercase; color:rgba(232,212,154,0.4); }
+.kpi-v  { font-family:Consolas,monospace; font-size:13px; font-weight:bold; }
+.kpi-v.ok { color:#6fcf97; } .kpi-v.wn { color:#f2994a; } .kpi-v.bd { color:#eb5757; }
+.kpi-s  { font-family:Consolas,monospace; font-size:7px; color:rgba(232,212,154,0.3); margin-top:1px; }
 
 /* ── TENSION ── */
-.ten-hdr{display:flex;justify-content:space-between;margin-bottom:4px;}
-.ten-lbl{font-family:Consolas,monospace;font-size:7px;letter-spacing:2px;text-transform:uppercase;color:rgba(200,160,64,0.4);}
-.ten-pct{font-family:Consolas,monospace;font-size:11px;font-weight:bold;}
-.ten-bar{height:5px;background:rgba(255,255,255,0.07);border:1px solid var(--bdr);}
-.ten-fill{height:100%;transition:width .7s ease,background .4s;}
-.ten-marks{display:flex;justify-content:space-between;margin-top:2px;}
-.ten-marks span{font-family:Consolas,monospace;font-size:6px;color:rgba(232,212,154,0.2);}
+.ten-hdr  { display:flex; justify-content:space-between; margin-bottom:4px; }
+.ten-lbl  { font-family:Consolas,monospace; font-size:7px; letter-spacing:2px; text-transform:uppercase; color:rgba(200,160,64,0.4); }
+.ten-pct  { font-family:Consolas,monospace; font-size:11px; font-weight:bold; }
+.ten-bar  { height:5px; background:rgba(255,255,255,0.07); border:1px solid var(--bdr); }
+.ten-fill { height:100%; transition:width .7s ease, background .4s; }
+.ten-marks { display:flex; justify-content:space-between; margin-top:2px; }
+.ten-marks span { font-family:Consolas,monospace; font-size:6px; color:rgba(232,212,154,0.2); }
 
 /* ── CHARTS ── */
-.ch-lbl{font-family:Consolas,monospace;font-size:7px;color:rgba(200,160,64,0.35);margin-bottom:2px;letter-spacing:1px;}
-.ch-wrap{background:rgba(8,20,42,0.8);border:1px solid var(--bdr);padding:3px;margin-bottom:6px;}
-canvas{width:100%!important;height:44px!important;display:block;}
+.ch-lbl  { font-family:Consolas,monospace; font-size:7px; color:rgba(200,160,64,0.35); margin-bottom:2px; letter-spacing:1px; }
+.ch-wrap { background:rgba(8,20,42,0.8); border:1px solid var(--bdr); padding:3px; margin-bottom:6px; }
+canvas   { width:100%!important; height:44px!important; display:block; }
+
+/* ── DEUDA ── */
+.deuda-pnl  { background:rgba(13,43,94,0.5); border-top:1px solid var(--bdr); padding:8px 10px; flex-shrink:0; }
+.deuda-ttl  { font-family:Consolas,monospace; font-size:7px; letter-spacing:3px; text-transform:uppercase; color:rgba(200,160,64,0.5); margin-bottom:7px; }
+.deuda-grid { display:grid; grid-template-columns:1fr 1fr; gap:3px; margin-bottom:6px; }
+.dk         { background:rgba(26,75,140,0.3); border:1px solid var(--bdr); padding:4px 6px; }
+.dk-lbl     { font-family:Consolas,monospace; font-size:7px; letter-spacing:1px; text-transform:uppercase; color:rgba(232,212,154,0.35); }
+.dk-v       { font-family:Consolas,monospace; font-size:12px; font-weight:bold; color:var(--perg); margin-top:2px; }
+.deuda-btns { display:grid; grid-template-columns:1fr 1fr; gap:3px; margin-bottom:5px; }
+.btn-d      { font-family:Consolas,monospace; font-size:8px; letter-spacing:1px; text-transform:uppercase; padding:6px 8px; border:1px solid; background:transparent; line-height:1.3; text-align:center; }
+.btn-d.tomar { color:var(--gold); border-color:rgba(200,160,64,0.4); }
+.btn-d.tomar:hover { background:rgba(200,160,64,0.1); }
+.btn-d.pagar { color:#eb5757; border-color:rgba(235,87,87,0.3); }
+.btn-d:disabled { opacity:0.3; cursor:not-allowed; }
+.deuda-info { font-family:Consolas,monospace; font-size:8px; color:rgba(232,212,154,0.4); letter-spacing:1px; }
+.deuda-info.alert { color:#eb5757; font-weight:bold; }
 
 /* ── NEWSPAPER ── */
-#col-news{background:#f4f0e8;color:#1a1a1a;}
-.np-mast{background:var(--inst);padding:7px 12px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
-.np-name{font-family:Georgia,serif;font-size:15px;font-weight:bold;color:var(--perg);letter-spacing:3px;}
-.np-meta{font-family:Consolas,monospace;font-size:7px;color:rgba(232,212,154,0.5);letter-spacing:2px;text-align:right;}
-.np-rule{height:2px;background:var(--gold);flex-shrink:0;}
-.np-body{padding:10px 12px;flex-shrink:0;}
-.np-tag{font-family:Consolas,monospace;font-size:7px;letter-spacing:3px;text-transform:uppercase;color:var(--bcra);margin-bottom:4px;}
-.np-hl{font-family:Georgia,serif;font-size:15px;font-weight:bold;line-height:1.2;color:#0D2B5E;margin-bottom:6px;}
-.np-lede{font-size:11px;line-height:1.6;color:#333;margin-bottom:6px;border-left:2px solid var(--gold);padding-left:7px;}
-.np-edu{font-size:10px;line-height:1.5;color:#555;background:#ede8db;padding:6px 8px;}
-.np-edu b{color:var(--bcra);font-size:7px;letter-spacing:2px;text-transform:uppercase;display:block;margin-bottom:2px;font-family:Consolas,monospace;}
-
-/* ── FISCAL ── */
-.fiscal{background:var(--inst);border-top:2px solid var(--gold);padding:8px 12px;flex-shrink:0;}
-.fiscal-ttl{font-family:Georgia,serif;font-size:11px;font-weight:bold;color:var(--perg);margin-bottom:3px;}
-.fiscal-desc{font-size:9px;color:rgba(232,212,154,0.5);line-height:1.4;margin-bottom:6px;}
-.fiscal-btns{display:grid;grid-template-columns:1fr 1fr;gap:4px;}
-.btn-f{font-family:Consolas,monospace;font-size:8px;letter-spacing:1px;text-transform:uppercase;padding:6px 7px;border:1px solid;cursor:pointer;background:transparent;line-height:1.3;text-align:center;}
-.btn-f.aj{color:var(--sup);border-color:rgba(30,120,64,0.4);}
-.btn-f.aj:hover{background:rgba(30,120,64,0.2);}
-.btn-f.ex{color:var(--warn);border-color:rgba(212,132,26,0.4);}
-.btn-f.ex:hover{background:rgba(212,132,26,0.15);}
-.btn-f:disabled{opacity:0.3;cursor:not-allowed;}
-.fiscal-cd{font-family:Consolas,monospace;font-size:7px;color:rgba(232,212,154,0.3);margin-top:4px;letter-spacing:1px;}
+#col-news { background:#f4f0e8; color:#1a1a1a; }
+.np-mast  { background:var(--inst); padding:7px 12px; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+.np-nm    { font-family:Georgia,serif; font-size:15px; font-weight:bold; color:var(--perg); letter-spacing:3px; }
+.np-meta  { font-family:Consolas,monospace; font-size:7px; color:rgba(232,212,154,0.5); letter-spacing:2px; text-align:right; }
+.np-rule  { height:2px; background:var(--gold); flex-shrink:0; }
+.np-body  { padding:14px 14px 10px; flex-shrink:0; }
+.np-tag   { font-family:Consolas,monospace; font-size:7px; letter-spacing:3px; text-transform:uppercase; color:var(--bcra); margin-bottom:6px; }
+.np-hl    { font-family:Georgia,serif; font-size:15px; font-weight:bold; line-height:1.25; color:#0D2B5E; margin-bottom:8px; }
+.np-lede  { font-size:11px; line-height:1.6; color:#333; margin-bottom:8px; border-left:2px solid var(--gold); padding-left:7px; }
+.np-edu   { font-size:10px; line-height:1.5; color:#555; background:#ede8db; padding:6px 8px; }
+.np-edu b { color:var(--bcra); font-size:7px; letter-spacing:2px; text-transform:uppercase; display:block; margin-bottom:2px; font-family:Consolas,monospace; }
 
 /* ── DECISIONS ── */
-#col-dec{background:#090f1a;}
-.dec-hdr{background:var(--bcra);padding:7px 12px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
-.dec-ttl{font-family:Georgia,serif;font-size:11px;font-weight:bold;color:var(--perg);letter-spacing:1px;}
-.dec-bdg{font-family:Consolas,monospace;font-size:8px;color:var(--gold);letter-spacing:2px;}
-.dec-body{padding:10px 12px;flex:1;display:flex;flex-direction:column;}
-.sliders{display:flex;flex-direction:column;gap:8px;flex:1;}
-.sl{display:flex;flex-direction:column;gap:2px;}
-.sl-top{display:flex;justify-content:space-between;align-items:center;gap:4px;}
-.sl-nm{font-family:Cambria,serif;font-size:10px;color:var(--perg);flex:1;}
-.sl-vl{font-family:Consolas,monospace;font-size:11px;font-weight:bold;color:var(--gold);white-space:nowrap;}
-.sl-ht{font-size:8px;color:rgba(232,212,154,0.3);font-style:italic;}
-.tt{position:relative;display:inline-flex;margin-left:4px;}
-.tt-i{width:12px;height:12px;border-radius:50%;border:1px solid rgba(200,160,64,0.35);display:flex;align-items:center;justify-content:center;font-size:7px;cursor:help;color:rgba(232,212,154,0.4);font-family:Consolas,monospace;flex-shrink:0;}
-.tt-b{display:none;position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);width:180px;background:var(--inst);color:var(--perg);border:1px solid var(--gold);padding:7px 9px;font-size:9px;line-height:1.5;z-index:300;font-family:Cambria,serif;pointer-events:none;}
-.tt-b::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:4px solid transparent;border-top-color:var(--gold);}
-.tt:hover .tt-b{display:block;}
-input[type=range]{-webkit-appearance:none;width:100%;height:2px;background:rgba(255,255,255,0.1);outline:none;cursor:pointer;}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:11px;height:11px;background:var(--gold);cursor:pointer;border:1px solid var(--inst);}
+#col-dec  { background:#090f1a; }
+.dec-hdr  { background:var(--bcra); padding:7px 12px; display:flex; justify-content:space-between; align-items:center; flex-shrink:0; }
+.dec-ttl  { font-family:Georgia,serif; font-size:11px; font-weight:bold; color:var(--perg); letter-spacing:1px; }
+.dec-bdg  { font-family:Consolas,monospace; font-size:8px; color:var(--gold); letter-spacing:2px; }
+.dec-body { padding:10px 12px; flex:1; display:flex; flex-direction:column; overflow-y:auto; }
+.sliders  { display:flex; flex-direction:column; gap:8px; }
+.sl       { display:flex; flex-direction:column; gap:2px; }
+.sl-top   { display:flex; justify-content:space-between; align-items:center; gap:4px; }
+.sl-nm    { font-family:Cambria,serif; font-size:10px; color:var(--perg); flex:1; }
+.sl-vl    { font-family:Consolas,monospace; font-size:11px; font-weight:bold; color:var(--gold); white-space:nowrap; }
+.sl-ht    { font-size:8px; color:rgba(232,212,154,0.3); font-style:italic; }
+.tt       { position:relative; display:inline-flex; margin-left:4px; }
+.tt-i     { width:12px; height:12px; border-radius:50%; border:1px solid rgba(200,160,64,0.35); display:flex; align-items:center; justify-content:center; font-size:7px; cursor:help; color:rgba(232,212,154,0.4); font-family:Consolas,monospace; flex-shrink:0; }
+.tt-b     { display:none; position:absolute; bottom:calc(100% + 4px); left:50%; transform:translateX(-50%); width:180px; background:var(--inst); color:var(--perg); border:1px solid var(--gold); padding:7px 9px; font-size:9px; line-height:1.5; z-index:300; font-family:Cambria,serif; pointer-events:none; }
+.tt-b::after { content:''; position:absolute; top:100%; left:50%; transform:translateX(-50%); border:4px solid transparent; border-top-color:var(--gold); }
+.tt:hover .tt-b { display:block; }
+input[type=range] { -webkit-appearance:none; width:100%; height:2px; background:rgba(255,255,255,0.1); outline:none; }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:11px; height:11px; background:var(--gold); cursor:pointer; border:1px solid var(--inst); }
 
 /* ── ESTERILIZACION ── */
-.ester-row{display:flex;align-items:center;gap:8px;margin-top:6px;padding:6px 8px;background:rgba(26,75,140,0.3);border:1px solid var(--bdr);}
-.ester-lbl{font-family:Cambria,serif;font-size:10px;color:var(--perg);flex:1;}
-.ester-btns{display:flex;gap:4px;}
-.btn-ester{font-family:Consolas,monospace;font-size:8px;letter-spacing:1px;text-transform:uppercase;padding:4px 8px;border:1px solid rgba(200,160,64,0.3);cursor:pointer;background:transparent;color:rgba(232,212,154,0.5);transition:all .15s;}
-.btn-ester.active-letras{background:rgba(26,75,140,0.6);color:var(--perg);border-color:var(--bcra);}
-.btn-ester.active-bonos{background:rgba(30,120,64,0.3);color:#6fcf97;border-color:var(--sup);}
-.btn-ester.active-no{background:rgba(192,57,43,0.2);color:#eb5757;border-color:var(--red);}
-.ester-hint{font-size:8px;color:rgba(232,212,154,0.35);font-style:italic;margin-top:2px;}
+.ester-row  { display:flex; align-items:flex-start; gap:8px; margin-top:8px; padding:6px 8px; background:rgba(26,75,140,0.3); border:1px solid var(--bdr); flex-shrink:0; }
+.ester-lbl  { font-family:Cambria,serif; font-size:10px; color:var(--perg); }
+.ester-hint { font-size:8px; color:rgba(232,212,154,0.35); font-style:italic; margin-top:2px; }
+.ester-btns { display:flex; gap:4px; flex-shrink:0; }
+.btn-ester  { font-family:Consolas,monospace; font-size:8px; letter-spacing:1px; text-transform:uppercase; padding:4px 8px; border:1px solid rgba(200,160,64,0.3); background:transparent; color:rgba(232,212,154,0.5); transition:all .15s; }
+.btn-ester.al { background:rgba(26,75,140,0.6); color:var(--perg); border-color:var(--bcra); }
+.btn-ester.ab { background:rgba(30,120,64,0.3); color:#6fcf97; border-color:var(--sup); }
+.btn-ester.an { background:rgba(192,57,43,0.2); color:#eb5757; border-color:var(--red); }
 
-/* ── MESA DE CAMBIOS ── */
-.mesa{background:rgba(13,43,94,0.5);border:1px solid var(--bdr);border-top:2px solid var(--gold);padding:8px 10px;flex-shrink:0;margin-top:8px;}
-.mesa-ttl{font-family:Consolas,monospace;font-size:7px;letter-spacing:3px;text-transform:uppercase;color:rgba(200,160,64,0.6);margin-bottom:7px;}
-.mesa-kpis{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px;margin-bottom:8px;}
-.mesa-k{background:rgba(26,75,140,0.3);border:1px solid var(--bdr);padding:4px 6px;}
-.mesa-klbl{font-family:Consolas,monospace;font-size:7px;letter-spacing:1px;text-transform:uppercase;color:rgba(232,212,154,0.35);}
-.mesa-kv{font-family:Consolas,monospace;font-size:12px;font-weight:bold;color:var(--perg);margin-top:2px;}
-.mesa-labels{display:flex;justify-content:space-between;font-family:Consolas,monospace;font-size:7px;color:rgba(232,212,154,0.3);margin-bottom:2px;}
-.mesa-val-row{display:flex;justify-content:space-between;align-items:center;margin-top:3px;}
-.mesa-hint{font-size:9px;color:rgba(232,212,154,0.4);font-style:italic;flex:1;}
-.mesa-val{font-family:Consolas,monospace;font-size:12px;font-weight:bold;color:var(--gold);}
-.mesa-efectos{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-top:6px;}
-.mesa-ef{font-family:Consolas,monospace;font-size:9px;padding:2px 5px;border:1px solid transparent;min-height:18px;}
-.mesa-ef.pos{color:#6fcf97;border-color:rgba(111,207,151,0.2);background:rgba(30,120,64,0.1);}
-.mesa-ef.neg{color:#eb5757;border-color:rgba(235,87,87,0.2);background:rgba(192,57,43,0.1);}
-.mesa-ef.neu{color:rgba(232,212,154,0.3);}
+/* ── MESA ── */
+.mesa      { background:rgba(13,43,94,0.5); border:1px solid var(--bdr); border-top:2px solid var(--gold); padding:8px 10px; flex-shrink:0; margin-top:8px; }
+.mesa-ttl  { font-family:Consolas,monospace; font-size:7px; letter-spacing:3px; text-transform:uppercase; color:rgba(200,160,64,0.6); margin-bottom:7px; }
+.mesa-kpis { display:grid; grid-template-columns:1fr 1fr 1fr; gap:3px; margin-bottom:8px; }
+.mesa-k    { background:rgba(26,75,140,0.3); border:1px solid var(--bdr); padding:4px 6px; }
+.mesa-klbl { font-family:Consolas,monospace; font-size:7px; letter-spacing:1px; text-transform:uppercase; color:rgba(232,212,154,0.35); }
+.mesa-kv   { font-family:Consolas,monospace; font-size:12px; font-weight:bold; color:var(--perg); margin-top:2px; }
+.mesa-lbls { display:flex; justify-content:space-between; font-family:Consolas,monospace; font-size:7px; color:rgba(232,212,154,0.3); margin-bottom:2px; }
+.mesa-row  { display:flex; justify-content:space-between; align-items:center; margin-top:3px; }
+.mesa-hint { font-size:9px; color:rgba(232,212,154,0.4); font-style:italic; flex:1; }
+.mesa-val  { font-family:Consolas,monospace; font-size:12px; font-weight:bold; color:var(--gold); }
+.mesa-efs  { display:grid; grid-template-columns:1fr 1fr; gap:2px; margin-top:6px; }
+.mef       { font-family:Consolas,monospace; font-size:9px; padding:2px 5px; border:1px solid transparent; min-height:18px; }
+.mef.pos   { color:#6fcf97; border-color:rgba(111,207,151,0.2); background:rgba(30,120,64,0.1); }
+.mef.neg   { color:#eb5757; border-color:rgba(235,87,87,0.2); background:rgba(192,57,43,0.1); }
+.mef.neu   { color:rgba(232,212,154,0.3); }
 
-.btn-confirm{font-family:Georgia,serif;font-size:12px;letter-spacing:3px;text-transform:uppercase;font-weight:bold;padding:12px;background:var(--gold);color:var(--inst);border:none;cursor:pointer;margin-top:10px;flex-shrink:0;width:100%;transition:background .2s;}
-.btn-confirm:hover{background:var(--perg);}
-.btn-confirm:disabled{opacity:0.35;cursor:not-allowed;}
+/* ── FISCAL (en Decisiones) ── */
+.fiscal     { background:var(--inst); border-top:2px solid var(--gold); padding:8px 12px; flex-shrink:0; margin-top:8px; }
+.fiscal-ttl { font-family:Georgia,serif; font-size:11px; font-weight:bold; color:var(--perg); margin-bottom:3px; }
+.fiscal-dsc { font-size:9px; color:rgba(232,212,154,0.5); line-height:1.4; margin-bottom:6px; }
+.fiscal-btn { display:grid; grid-template-columns:1fr 1fr; gap:4px; }
+.btn-f      { font-family:Consolas,monospace; font-size:8px; letter-spacing:1px; text-transform:uppercase; padding:6px 7px; border:1px solid; background:transparent; line-height:1.3; text-align:center; }
+.btn-f.aj   { color:var(--sup); border-color:rgba(30,120,64,0.4); }
+.btn-f.aj:hover { background:rgba(30,120,64,0.2); }
+.btn-f.ex   { color:var(--warn); border-color:rgba(212,132,26,0.4); }
+.btn-f.ex:hover { background:rgba(212,132,26,0.15); }
+.btn-f:disabled { opacity:0.3; cursor:not-allowed; }
+.fiscal-cd  { font-family:Consolas,monospace; font-size:7px; color:rgba(232,212,154,0.3); margin-top:4px; letter-spacing:1px; }
 
-/* ── COMUNICADO MODAL ── */
-.com-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;z-index:500;}
-.com-overlay.open{display:flex;}
-.com-box{background:var(--inst);border:2px solid var(--gold);padding:24px;max-width:420px;width:90%;}
-.com-ttl{font-family:Georgia,serif;font-size:16px;font-weight:bold;color:var(--perg);margin-bottom:4px;letter-spacing:1px;}
-.com-sub{font-family:Consolas,monospace;font-size:9px;color:rgba(200,160,64,0.5);letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;}
-.com-warn{font-size:11px;color:rgba(232,212,154,0.6);line-height:1.6;margin-bottom:14px;font-style:italic;border-left:2px solid var(--warn);padding-left:8px;}
-.com-opts{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
-.btn-com{font-family:Cambria,serif;font-size:11px;padding:9px 12px;border:1px solid var(--bdr);cursor:pointer;background:rgba(26,75,140,0.3);color:var(--perg);text-align:left;transition:all .15s;line-height:1.4;}
-.btn-com:hover{background:rgba(26,75,140,0.6);border-color:var(--gold);}
-.btn-com.selected{background:rgba(200,160,64,0.2);border-color:var(--gold);color:var(--perg);}
-.btn-com small{display:block;font-family:Consolas,monospace;font-size:8px;color:rgba(232,212,154,0.45);margin-top:2px;letter-spacing:1px;}
-.com-btns{display:flex;gap:8px;}
-.btn-emit{font-family:Georgia,serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:bold;padding:10px 20px;background:var(--gold);color:var(--inst);border:none;cursor:pointer;flex:1;}
-.btn-emit:hover{background:var(--perg);}
-.btn-skip{font-family:Georgia,serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:10px 16px;background:transparent;color:var(--perg);border:1px solid var(--bdr);cursor:pointer;}
-.btn-skip:hover{background:rgba(255,255,255,.05);}
+.btn-confirm { font-family:Georgia,serif; font-size:12px; letter-spacing:3px; text-transform:uppercase; font-weight:bold; padding:12px; background:var(--gold); color:var(--inst); border:none; margin-top:10px; flex-shrink:0; width:100%; transition:background .2s; }
+.btn-confirm:hover { background:var(--perg); }
+.btn-confirm:disabled { opacity:0.35; cursor:not-allowed; }
 
 /* ── SOCIAL ── */
-#col-social{background:#06101a;}
-.soc-hdr{background:var(--inst);border-bottom:1px solid var(--bdr);padding:7px 11px;display:flex;align-items:center;gap:7px;flex-shrink:0;}
-.soc-icon{font-size:12px;}
-.soc-ttl{font-family:Consolas,monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);}
-.soc-turn{font-family:Consolas,monospace;font-size:7px;color:rgba(232,212,154,0.3);margin-left:auto;}
-.tweets{flex:1;overflow-y:auto;padding:7px;display:flex;flex-direction:column;gap:5px;min-height:0;}
-.tw{background:rgba(26,75,140,0.2);border:1px solid rgba(200,160,64,0.1);padding:7px;flex-shrink:0;}
-.tw-hdr{display:flex;gap:6px;margin-bottom:3px;}
-.tw-av{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;border:1px solid var(--bdr);}
-.tw-nm{font-family:Cambria,serif;font-size:10px;font-weight:bold;color:var(--perg);}
-.tw-hd{font-family:Consolas,monospace;font-size:7px;color:rgba(232,212,154,0.35);}
-.tw-bd{font-size:9px;line-height:1.45;color:rgba(232,212,154,0.75);}
-.tw-lk{font-family:Consolas,monospace;font-size:7px;color:rgba(232,212,154,0.25);margin-top:3px;}
-.tw.comunicado{border-color:rgba(200,160,64,0.4);background:rgba(200,160,64,0.08);}
-.log-wrap{border-top:1px solid var(--bdr);padding:7px 9px;flex-shrink:0;}
-.log-ttl{font-family:Consolas,monospace;font-size:7px;letter-spacing:2px;text-transform:uppercase;color:rgba(200,160,64,0.35);margin-bottom:5px;}
-.le{padding:3px 0;border-bottom:1px solid rgba(200,160,64,0.06);}
-.le-q{font-family:Consolas,monospace;font-size:7px;color:rgba(232,212,154,0.25);}
-.le-ev{font-size:8px;color:rgba(232,212,154,0.55);line-height:1.3;margin:1px 0;}
-.le-tags{display:flex;flex-wrap:wrap;gap:2px;}
-.ltag{font-family:Consolas,monospace;font-size:6px;padding:1px 2px;border:1px solid;}
-.ltag.up{color:#6fcf97;border-color:rgba(111,207,151,0.3);}
-.ltag.dn{color:#eb5757;border-color:rgba(235,87,87,0.3);}
+#col-social  { background:#06101a; }
+.soc-hdr     { background:var(--inst); border-bottom:1px solid var(--bdr); padding:7px 11px; display:flex; align-items:center; gap:7px; flex-shrink:0; }
+.soc-icon    { font-size:12px; }
+.soc-ttl     { font-family:Consolas,monospace; font-size:8px; letter-spacing:2px; text-transform:uppercase; color:var(--gold); }
+.soc-turn    { font-family:Consolas,monospace; font-size:7px; color:rgba(232,212,154,0.3); margin-left:auto; }
+.tweets      { flex:1; overflow-y:auto; padding:7px; display:flex; flex-direction:column; gap:5px; min-height:0; }
+.tw          { background:rgba(26,75,140,0.2); border:1px solid rgba(200,160,64,0.1); padding:7px; flex-shrink:0; }
+.tw-hdr      { display:flex; gap:6px; margin-bottom:3px; }
+.tw-av       { width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; flex-shrink:0; border:1px solid var(--bdr); }
+.tw-nm       { font-family:Cambria,serif; font-size:10px; font-weight:bold; color:var(--perg); }
+.tw-hd       { font-family:Consolas,monospace; font-size:7px; color:rgba(232,212,154,0.35); }
+.tw-bd       { font-size:9px; line-height:1.45; color:rgba(232,212,154,0.75); }
+.tw-lk       { font-family:Consolas,monospace; font-size:7px; color:rgba(232,212,154,0.25); margin-top:3px; }
+.tw.com      { border-color:rgba(200,160,64,0.4); background:rgba(200,160,64,0.08); }
+.log-wrap    { border-top:1px solid var(--bdr); padding:7px 9px; flex-shrink:0; }
+.log-ttl     { font-family:Consolas,monospace; font-size:7px; letter-spacing:2px; text-transform:uppercase; color:rgba(200,160,64,0.35); margin-bottom:5px; }
+.le          { padding:3px 0; border-bottom:1px solid rgba(200,160,64,0.06); }
+.le-q        { font-family:Consolas,monospace; font-size:7px; color:rgba(232,212,154,0.25); }
+.le-ev       { font-size:8px; color:rgba(232,212,154,0.55); line-height:1.3; margin:1px 0; }
+.le-tags     { display:flex; flex-wrap:wrap; gap:2px; }
+.ltag        { font-family:Consolas,monospace; font-size:6px; padding:1px 2px; border:1px solid; }
+.ltag.up     { color:#6fcf97; border-color:rgba(111,207,151,0.3); }
+.ltag.dn     { color:#eb5757; border-color:rgba(235,87,87,0.3); }
 
 /* ── END ── */
-.e-eye{font-family:Consolas,monospace;font-size:9px;letter-spacing:5px;text-transform:uppercase;color:rgba(200,160,64,0.45);margin-bottom:12px;}
-.e-icon{font-size:68px;line-height:1;margin-bottom:14px;}
-.e-type{font-family:Consolas,monospace;font-size:9px;letter-spacing:4px;text-transform:uppercase;color:rgba(232,212,154,0.4);margin-bottom:6px;}
-.e-title{font-family:Georgia,serif;font-size:clamp(32px,7vw,72px);font-weight:bold;letter-spacing:2px;line-height:.95;margin-bottom:16px;}
-.e-rule{width:48px;height:2px;background:var(--gold);margin:0 auto 16px;}
-.e-nar{max-width:480px;font-size:13px;line-height:1.8;color:rgba(232,212,154,0.65);margin-bottom:24px;font-style:italic;}
-.e-nar strong{color:var(--perg);font-style:normal;}
-.e-stats{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--bdr);max-width:480px;width:100%;margin-bottom:24px;}
-.e-stat{padding:12px 8px;border-right:1px solid var(--bdr);}
-.e-stat:last-child{border-right:none;}
-.e-slbl{font-family:Consolas,monospace;font-size:7px;letter-spacing:2px;text-transform:uppercase;color:rgba(200,160,64,0.45);margin-bottom:4px;}
-.e-sval{font-family:Consolas,monospace;font-size:17px;font-weight:bold;}
-.vg{color:#6fcf97;}.vr{color:#eb5757;}.vw{color:#f2994a;}.vn{color:var(--perg);}
-.e-btns{display:flex;gap:9px;flex-wrap:wrap;justify-content:center;}
-.btn-new{font-family:Georgia,serif;font-size:12px;letter-spacing:3px;text-transform:uppercase;font-weight:bold;padding:12px 36px;background:var(--gold);color:var(--inst);border:none;cursor:pointer;}
-.btn-new:hover{background:var(--perg);}
-.btn-mnu{font-family:Georgia,serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:12px 26px;background:transparent;color:var(--perg);border:1px solid var(--bdr);cursor:pointer;}
-.btn-mnu:hover{background:rgba(255,255,255,.05);}
+.e-eye   { font-family:Consolas,monospace; font-size:9px; letter-spacing:5px; text-transform:uppercase; color:rgba(200,160,64,0.45); margin-bottom:12px; }
+.e-icon  { font-size:68px; line-height:1; margin-bottom:14px; }
+.e-type  { font-family:Consolas,monospace; font-size:9px; letter-spacing:4px; text-transform:uppercase; color:rgba(232,212,154,0.4); margin-bottom:6px; }
+.e-title { font-family:Georgia,serif; font-size:clamp(32px,7vw,72px); font-weight:bold; letter-spacing:2px; line-height:.95; margin-bottom:16px; }
+.e-rule  { width:48px; height:2px; background:var(--gold); margin:0 auto 16px; }
+.e-nar   { max-width:480px; font-size:13px; line-height:1.8; color:rgba(232,212,154,0.65); margin-bottom:24px; font-style:italic; }
+.e-nar strong { color:var(--perg); font-style:normal; }
+.e-stats { display:grid; grid-template-columns:repeat(4,1fr); border:1px solid var(--bdr); max-width:480px; width:100%; margin-bottom:24px; }
+.e-stat  { padding:12px 8px; border-right:1px solid var(--bdr); }
+.e-stat:last-child { border-right:none; }
+.e-slbl  { font-family:Consolas,monospace; font-size:7px; letter-spacing:2px; text-transform:uppercase; color:rgba(200,160,64,0.45); margin-bottom:4px; }
+.e-sval  { font-family:Consolas,monospace; font-size:17px; font-weight:bold; }
+.vg { color:#6fcf97; } .vr { color:#eb5757; } .vw { color:#f2994a; } .vn { color:var(--perg); }
+.e-btns  { display:flex; gap:9px; flex-wrap:wrap; justify-content:center; }
+.btn-new { font-family:Georgia,serif; font-size:12px; letter-spacing:3px; text-transform:uppercase; font-weight:bold; padding:12px 36px; background:var(--gold); color:var(--inst); border:none; }
+.btn-new:hover { background:var(--perg); }
+.btn-mnu { font-family:Georgia,serif; font-size:11px; letter-spacing:2px; text-transform:uppercase; padding:12px 26px; background:transparent; color:var(--perg); border:1px solid var(--bdr); }
 
-/* ── MODAL GENERAL ── */
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.65);display:none;align-items:center;justify-content:center;z-index:400;}
-.modal.open{display:flex;}
-.modal-box{background:var(--inst);border:2px solid var(--gold);padding:22px 26px;max-width:380px;width:90%;text-align:center;}
-.m-icon{font-size:34px;margin-bottom:9px;}
-.m-title{font-family:Georgia,serif;font-size:17px;font-weight:bold;color:var(--perg);margin-bottom:7px;}
-.m-body{font-size:11px;line-height:1.7;color:rgba(232,212,154,0.7);margin-bottom:10px;font-style:italic;}
-.m-eff{font-family:Consolas,monospace;font-size:9px;color:var(--gold);margin-bottom:14px;letter-spacing:1px;}
-.btn-modal{font-family:Georgia,serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;font-weight:bold;padding:9px 26px;background:var(--gold);color:var(--inst);border:none;cursor:pointer;}
+/* ── MODALES ── */
+.modal    { position:fixed; inset:0; background:rgba(0,0,0,.65); display:none; align-items:center; justify-content:center; z-index:400; }
+.modal.open { display:flex; }
+.modal-box { background:var(--inst); border:2px solid var(--gold); padding:22px 26px; max-width:380px; width:90%; text-align:center; }
+.m-icon  { font-size:34px; margin-bottom:9px; }
+.m-title { font-family:Georgia,serif; font-size:17px; font-weight:bold; color:var(--perg); margin-bottom:7px; }
+.m-body  { font-size:11px; line-height:1.7; color:rgba(232,212,154,0.7); margin-bottom:10px; font-style:italic; }
+.m-eff   { font-family:Consolas,monospace; font-size:9px; color:var(--gold); margin-bottom:14px; letter-spacing:1px; }
+.btn-modal { font-family:Georgia,serif; font-size:10px; letter-spacing:3px; text-transform:uppercase; font-weight:bold; padding:9px 26px; background:var(--gold); color:var(--inst); border:none; }
+
+/* ── COMUNICADO ── */
+.com-ov  { position:fixed; inset:0; background:rgba(0,0,0,.75); display:none; align-items:center; justify-content:center; z-index:500; }
+.com-ov.open { display:flex; }
+.com-box { background:var(--inst); border:2px solid var(--gold); padding:24px; max-width:420px; width:90%; max-height:90vh; overflow-y:auto; }
+.com-ttl { font-family:Georgia,serif; font-size:16px; font-weight:bold; color:var(--perg); margin-bottom:4px; }
+.com-sub { font-family:Consolas,monospace; font-size:9px; color:rgba(200,160,64,0.5); letter-spacing:3px; text-transform:uppercase; margin-bottom:14px; }
+.com-warn { font-size:11px; color:rgba(232,212,154,0.6); line-height:1.6; margin-bottom:14px; font-style:italic; border-left:2px solid var(--warn); padding-left:8px; }
+.com-opts { display:flex; flex-direction:column; gap:6px; margin-bottom:14px; }
+.btn-com  { font-family:Cambria,serif; font-size:11px; padding:9px 12px; border:1px solid var(--bdr); background:rgba(26,75,140,0.3); color:var(--perg); text-align:left; transition:all .15s; line-height:1.4; }
+.btn-com.sel { background:rgba(200,160,64,0.2); border-color:var(--gold); }
+.btn-com small { display:block; font-family:Consolas,monospace; font-size:8px; color:rgba(232,212,154,0.45); margin-top:2px; }
+.com-btns { display:flex; gap:8px; }
+.btn-emit { font-family:Georgia,serif; font-size:11px; letter-spacing:2px; text-transform:uppercase; font-weight:bold; padding:10px 20px; background:var(--gold); color:var(--inst); border:none; flex:1; }
+.btn-skip { font-family:Georgia,serif; font-size:11px; letter-spacing:2px; text-transform:uppercase; padding:10px 16px; background:transparent; color:var(--perg); border:1px solid var(--bdr); }
+
+/* ── ELECCIONES ── */
+.elec-ov  { position:fixed; inset:0; background:rgba(0,0,0,.8); display:none; align-items:center; justify-content:center; z-index:550; }
+.elec-ov.open { display:flex; }
+.elec-box { background:var(--inst); border:2px solid var(--gold); padding:24px; max-width:500px; width:92%; max-height:90vh; overflow-y:auto; }
+.elec-tp  { font-family:Consolas,monospace; font-size:9px; letter-spacing:4px; text-transform:uppercase; color:rgba(200,160,64,0.5); margin-bottom:6px; }
+.elec-ttl { font-family:Georgia,serif; font-size:20px; font-weight:bold; color:var(--perg); margin-bottom:4px; }
+.elec-sub { font-size:11px; color:rgba(232,212,154,0.5); margin-bottom:16px; font-style:italic; }
+.partidos { display:flex; flex-direction:column; gap:7px; margin-bottom:14px; }
+.partido  { background:rgba(26,75,140,0.3); border:1px solid var(--bdr); padding:9px 12px; }
+.part-hdr { display:flex; justify-content:space-between; align-items:center; margin-bottom:3px; }
+.part-nm  { font-family:Georgia,serif; font-size:13px; font-weight:bold; }
+.part-pct { font-family:Consolas,monospace; font-size:14px; font-weight:bold; }
+.part-bar { height:3px; background:rgba(255,255,255,.08); margin-bottom:3px; }
+.part-bar-fill { height:100%; }
+.part-ide { font-size:10px; color:rgba(232,212,154,0.5); font-style:italic; }
+.elec-res { background:rgba(200,160,64,0.12); border:1px solid var(--gold); padding:12px; margin-bottom:14px; }
+.elec-res-ttl  { font-family:Georgia,serif; font-size:14px; font-weight:bold; color:var(--gold); margin-bottom:6px; }
+.elec-res-body { font-size:11px; color:rgba(232,212,154,0.75); line-height:1.6; }
+.elec-res-eff  { font-family:Consolas,monospace; font-size:10px; color:var(--gold); margin-top:6px; }
+.btn-elec { font-family:Georgia,serif; font-size:12px; letter-spacing:3px; text-transform:uppercase; font-weight:bold; padding:12px 28px; background:var(--gold); color:var(--inst); border:none; width:100%; }
 
 /* ── FLASH / ALERT ── */
-.flash{position:fixed;inset:0;pointer-events:none;z-index:999;animation:flo .5s ease forwards;}
-.flash-r{background:rgba(192,57,43,.18);}.flash-g{background:rgba(30,120,64,.15);}
-@keyframes flo{0%{opacity:1}100%{opacity:0}}
-.alert{position:fixed;top:46px;left:50%;transform:translateX(-50%);padding:8px 18px;font-family:Consolas,monospace;font-size:9px;letter-spacing:2px;z-index:600;text-align:center;white-space:nowrap;animation:alo 3.5s ease forwards;color:var(--inst);font-weight:bold;}
-@keyframes alo{0%,75%{opacity:1;transform:translateX(-50%) translateY(0)}100%{opacity:0;transform:translateX(-50%) translateY(-8px)}}
+.flash   { position:fixed; inset:0; pointer-events:none; z-index:999; animation:flo .5s ease forwards; }
+.flash-r { background:rgba(192,57,43,.18); } .flash-g { background:rgba(30,120,64,.15); }
+@keyframes flo { 0%{opacity:1} 100%{opacity:0} }
+.alert   { position:fixed; top:46px; left:50%; transform:translateX(-50%); padding:8px 18px; font-family:Consolas,monospace; font-size:9px; letter-spacing:2px; z-index:600; text-align:center; white-space:nowrap; animation:alo 3.5s ease forwards; color:var(--inst); font-weight:bold; }
+@keyframes alo { 0%,75%{opacity:1;transform:translateX(-50%) translateY(0)} 100%{opacity:0;transform:translateX(-50%) translateY(-8px)} }
+
+/* ── TAB BAR (mobile only) ── */
+.tab-bar { display:none; }
 
 /* ── MOBILE ── */
 @media(max-width:768px){
-  body{overflow-y:auto;}
-  #screen-game.active{display:flex;flex-direction:column;height:auto;overflow:visible;}
-  .g-main{display:flex;flex-direction:column;overflow:visible;height:auto;}
-  .gcol{overflow-y:visible;height:auto;border-right:none;border-bottom:1px solid var(--bdr);}
-  #col-left{order:1;}
-  #col-news{order:2;}
-  #col-dec{order:3;}
-  #col-social{order:4;}
-  .tweets{max-height:300px;overflow-y:auto;}
-  .tt-b{left:0;transform:none;width:220px;}
-  .mesa-efectos{grid-template-columns:1fr;}
+  body { overflow:hidden; }
+  #s-game.active { display:flex; flex-direction:column; height:100vh; height:100dvh; overflow:hidden; }
+  .g-main { flex:1; display:block; overflow:hidden; position:relative; min-height:0; }
+  .gcol { display:none; position:absolute; inset:0; overflow-y:auto; -webkit-overflow-scrolling:touch; border-right:none; }
+  .gcol.tab-active { display:flex; flex-direction:column; }
+  .tab-bar { display:flex; flex-shrink:0; background:var(--inst); border-top:2px solid var(--gold); height:56px; }
+  .tab-btn { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; background:transparent; border:none; padding:6px 2px; border-top:2px solid transparent; margin-top:-2px; }
+  .tab-btn.active { border-top-color:var(--gold); background:rgba(200,160,64,0.08); }
+  .tab-icon  { font-size:16px; line-height:1; }
+  .tab-label { font-family:Consolas,monospace; font-size:8px; letter-spacing:1px; text-transform:uppercase; color:rgba(232,212,154,0.5); }
+  .tab-btn.active .tab-label { color:var(--gold); }
+  .tt-b { left:0; transform:none; width:220px; }
+  .mesa-efs { grid-template-columns:1fr; }
+  .tweets { flex:1; min-height:0; }
+  .dec-body { overflow-y:auto; }
 }
 </style>
 </head>
 <body>
 <div id="app">
 
-<!-- INTRO -->
-<div id="screen-intro" class="screen active">
+<!-- ═══ INTRO ═══ -->
+<div id="s-intro" class="screen active">
   <div class="i-seal">&#127983;</div>
   <div class="i-eye">Rep. Argentina &middot; Uso Interno &middot; Doc. Reservado</div>
   <div class="i-title">BCRA</div>
   <div class="i-sub">Argentina &middot; Simulador del Banco Central</div>
   <div class="i-tag">"Estabilizamos el pa&iacute;s. Eventualmente."</div>
   <div class="i-rule"></div>
-  <div class="i-copy">
-    V.E. acaba de ser designado <strong>Presidente del Banco Central</strong>.<br><br>
-    Las reservas se encuentran en niveles sub&oacute;ptimos. La inflaci&oacute;n exhibe una din&aacute;mica de <em>correcci&oacute;n t&eacute;cnica</em> acelerada. El tipo de cambio goza de buena salud, relativa.<br><br>
-    Administre la pol&iacute;tica monetaria con la <strong>precisi&oacute;n t&eacute;cnica que la instituci&oacute;n requiere</strong>.
+  <div class="onboard">
+    <div class="ob-field">
+      <label class="ob-label">Su nombre completo</label>
+      <input type="text" id="ob-nombre" class="ob-input" placeholder="Ej: Juan P&eacute;rez" maxlength="40">
+    </div>
+    <div class="ob-field">
+      <label class="ob-label">Su perfil de pol&iacute;tica monetaria</label>
+      <div class="ob-tipos">
+        <button type="button" class="btn-tipo" data-tipo="expansivo">
+          <span class="tipo-nm">Expansivo</span>
+          <span class="tipo-desc">Prioriza crecimiento y empleo. Tasa baja, emisi&oacute;n alta.</span>
+        </button>
+        <button type="button" class="btn-tipo" data-tipo="moderado">
+          <span class="tipo-nm">Moderado</span>
+          <span class="tipo-desc">Equilibrio pragm&aacute;tico entre crecimiento y estabilidad.</span>
+        </button>
+        <button type="button" class="btn-tipo" data-tipo="conservador">
+          <span class="tipo-nm">Conservador</span>
+          <span class="tipo-desc">Prioriza estabilidad. Tasa alta, emisi&oacute;n controlada.</span>
+        </button>
+        <button type="button" class="btn-tipo" data-tipo="clasico">
+          <span class="tipo-nm">Cl&aacute;sico</span>
+          <span class="tipo-desc">Ortodoxia estricta. Sin financiamiento al Tesoro.</span>
+        </button>
+      </div>
+    </div>
   </div>
   <button type="button" class="btn-main" id="btn-start">Asumir el Cargo</button>
   <div class="i-foot">MDB-2024-00000001 &mdash; Sujeto a modificaciones sin previo aviso</div>
   <div class="i-credit">Creado y dise&ntilde;ado por <strong>Tom&aacute;s Copped&eacute;</strong></div>
 </div>
 
-<!-- GAME -->
-<div id="screen-game" class="screen">
+<!-- ═══ GAME ═══ -->
+<div id="s-game" class="screen">
   <div class="g-hdr">
     <div class="g-logo">BCRA <span>ARG</span></div>
     <div class="g-date" id="hdr-date">ENE 2024</div>
@@ -286,8 +380,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:11px;heigh
   <div class="ticker"><div class="ticker-inner" id="ticker-inner"></div></div>
   <div class="g-main">
 
-    <!-- COL 1 -->
-    <div class="gcol" id="col-left" style="background:#0a1830;">
+    <!-- COL 1: DATOS -->
+    <div class="gcol tab-active" id="col-left" style="background:#0a1830;">
       <div class="pnl">
         <div class="pnl-ttl">Indicadores Econ&oacute;micos</div>
         <div class="kpi-list" id="kpi-list"></div>
@@ -300,40 +394,42 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:11px;heigh
       </div>
       <div class="pnl">
         <div class="pnl-ttl">Evoluci&oacute;n Hist&oacute;rica</div>
-        <div class="ch-lbl">INFLACI&Oacute;N %</div>
-        <div class="ch-wrap"><canvas id="ch-inf"></canvas></div>
-        <div class="ch-lbl">RESERVAS USD B</div>
-        <div class="ch-wrap"><canvas id="ch-res"></canvas></div>
-        <div class="ch-lbl">DESEMPLEO %</div>
-        <div class="ch-wrap"><canvas id="ch-des"></canvas></div>
+        <div class="ch-lbl">INFLACI&Oacute;N %</div><div class="ch-wrap"><canvas id="ch-inf"></canvas></div>
+        <div class="ch-lbl">RESERVAS USD B</div><div class="ch-wrap"><canvas id="ch-res"></canvas></div>
+        <div class="ch-lbl">DESEMPLEO %</div><div class="ch-wrap"><canvas id="ch-des"></canvas></div>
+      </div>
+      <div class="deuda-pnl">
+        <div class="deuda-ttl">Deuda Externa &mdash; Mercados Internacionales</div>
+        <div class="deuda-grid">
+          <div class="dk"><div class="dk-lbl">Stock</div><div class="dk-v" id="dk-stock">USD 0B</div></div>
+          <div class="dk"><div class="dk-lbl">Pr&oacute;x. Venc.</div><div class="dk-v" id="dk-prox">Sin venc.</div></div>
+          <div class="dk"><div class="dk-lbl">Cuota Trim.</div><div class="dk-v" id="dk-cuota">USD 0B</div></div>
+          <div class="dk"><div class="dk-lbl">Tasa Int&eacute;s</div><div class="dk-v" id="dk-tasa">--</div></div>
+        </div>
+        <div class="deuda-btns">
+          <button type="button" class="btn-d tomar" id="btn-d-tomar">+ Tomar USD 2B</button>
+          <button type="button" class="btn-d pagar" id="btn-d-pagar" disabled>Pagar cuota</button>
+        </div>
+        <div class="deuda-info" id="dk-info">Sin deuda activa. Pod&eacute;s tomar a 8 trimestres.</div>
       </div>
     </div>
 
-    <!-- COL 2: Diario + Fiscal -->
+    <!-- COL 2: NOTICIAS -->
     <div class="gcol" id="col-news">
       <div class="np-mast">
-        <div class="np-name">EL CRONISTA</div>
+        <div class="np-nm">EL CRONISTA</div>
         <div class="np-meta" id="np-date">BUENOS AIRES<br>ENERO 2024</div>
       </div>
       <div class="np-rule"></div>
       <div class="np-body">
         <div class="np-tag" id="np-tag">ECONOM&Iacute;A</div>
-        <div class="np-hl" id="np-hl">El BCRA inicia nueva gesti&oacute;n bajo expectativa de los mercados</div>
-        <div class="np-lede" id="np-lede">Las reservas internacionales se encuentran en niveles t&eacute;cnicamente adecuados para las necesidades del programa vigente.</div>
-        <div class="np-edu"><b>Concepto Econ&oacute;mico</b><span id="np-edu">Seleccione un evento para ver el concepto educativo.</span></div>
-      </div>
-      <div class="fiscal">
-        <div class="fiscal-ttl">Coordinaci&oacute;n con el Ejecutivo</div>
-        <div class="fiscal-desc">Solicite al Poder Ejecutivo una modificaci&oacute;n de la pol&iacute;tica fiscal. Disponible cada 2 trimestres.</div>
-        <div class="fiscal-btns">
-          <button class="btn-f aj" id="btn-aj">Ajuste fiscal<br><small>Reducir d&eacute;ficit</small></button>
-          <button class="btn-f ex" id="btn-ex">Expansi&oacute;n<br><small>M&aacute;s gasto</small></button>
-        </div>
-        <div class="fiscal-cd" id="fiscal-cd">Solicitud disponible</div>
+        <div class="np-hl" id="np-hl">El BCRA inicia nueva gesti&oacute;n bajo la expectativa de los mercados</div>
+        <div class="np-lede" id="np-lede">Las reservas internacionales se encuentran en niveles t&eacute;cnicamente adecuados.</div>
+        <div class="np-edu"><b>Concepto Econ&oacute;mico</b><span id="np-edu">Seleccione un evento.</span></div>
       </div>
     </div>
 
-    <!-- COL 3: Decisiones -->
+    <!-- COL 3: DECISIONES -->
     <div class="gcol" id="col-dec">
       <div class="dec-hdr">
         <span class="dec-ttl">Decisiones de Pol&iacute;tica Monetaria</span>
@@ -342,46 +438,54 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:11px;heigh
       <div class="dec-body">
         <div class="sliders" id="sliders"></div>
 
-        <!-- Esterilizacion -->
         <div class="ester-row">
           <div style="flex:1">
             <div class="ester-lbl">Esterilizaci&oacute;n de emisi&oacute;n por compra de reservas</div>
-            <div class="ester-hint" id="ester-hint">Sin compra activa &mdash; sin esterilizaci&oacute;n necesaria</div>
+            <div class="ester-hint" id="ester-hint">Sin compra activa</div>
           </div>
           <div class="ester-btns">
-            <button class="btn-ester" id="ester-letras">Letras</button>
-            <button class="btn-ester" id="ester-bonos">Bonos</button>
-            <button class="btn-ester active-no" id="ester-no">No</button>
+            <button type="button" class="btn-ester" id="btn-esl">Letras</button>
+            <button type="button" class="btn-ester" id="btn-esb">Bonos</button>
+            <button type="button" class="btn-ester an" id="btn-esn">No</button>
           </div>
         </div>
 
-        <!-- Mesa de Cambios -->
         <div class="mesa">
           <div class="mesa-ttl">Mesa de Cambios &mdash; Operaci&oacute;n de Reservas</div>
           <div class="mesa-kpis">
-            <div class="mesa-k"><div class="mesa-klbl">Reservas</div><div class="mesa-kv" id="mesa-res">USD 10.0B</div></div>
-            <div class="mesa-k"><div class="mesa-klbl">Brecha</div><div class="mesa-kv" id="mesa-brecha">45%</div></div>
-            <div class="mesa-k"><div class="mesa-klbl">Operaci&oacute;n</div><div class="mesa-kv" id="mesa-op">Neutral</div></div>
+            <div class="mesa-k"><div class="mesa-klbl">Reservas</div><div class="mesa-kv" id="mk-res">USD 10.0B</div></div>
+            <div class="mesa-k"><div class="mesa-klbl">Brecha</div><div class="mesa-kv" id="mk-brecha">45%</div></div>
+            <div class="mesa-k"><div class="mesa-klbl">Operaci&oacute;n</div><div class="mesa-kv" id="mk-op">Neutral</div></div>
           </div>
-          <div class="mesa-labels"><span>Comprar USD</span><span>Neutral</span><span>Vender USD</span></div>
+          <div class="mesa-lbls"><span>Comprar USD</span><span>Neutral</span><span>Vender USD</span></div>
           <input type="range" id="sl-interv" min="-5" max="5" step="1" value="0">
-          <div class="mesa-val-row">
+          <div class="mesa-row">
             <span class="mesa-hint" id="mesa-hint">Sin operaci&oacute;n activa</span>
             <span class="mesa-val" id="slv-interv">0B USD</span>
           </div>
-          <div class="mesa-efectos">
-            <div class="mesa-ef neu" id="mef-res"></div>
-            <div class="mesa-ef neu" id="mef-brecha"></div>
-            <div class="mesa-ef neu" id="mef-inf"></div>
-            <div class="mesa-ef neu" id="mef-ester"></div>
+          <div class="mesa-efs">
+            <div class="mef neu" id="mef-res"></div>
+            <div class="mef neu" id="mef-brecha"></div>
+            <div class="mef neu" id="mef-inf"></div>
+            <div class="mef neu" id="mef-ester"></div>
           </div>
         </div>
 
-        <button class="btn-confirm" id="btn-confirm">Confirmar Decisiones del Directorio</button>
+        <button type="button" class="btn-confirm" id="btn-confirm">Confirmar Decisiones del Directorio</button>
+
+        <div class="fiscal">
+          <div class="fiscal-ttl">Coordinaci&oacute;n con el Ejecutivo</div>
+          <div class="fiscal-dsc">Solicite al Ejecutivo una modificaci&oacute;n fiscal. Disponible cada 2 trimestres.</div>
+          <div class="fiscal-btn">
+            <button type="button" class="btn-f aj" id="btn-aj">Ajuste fiscal<br><small>Reducir d&eacute;ficit</small></button>
+            <button type="button" class="btn-f ex" id="btn-ex">Expansi&oacute;n<br><small>M&aacute;s gasto</small></button>
+          </div>
+          <div class="fiscal-cd" id="fiscal-cd">Solicitud disponible</div>
+        </div>
       </div>
     </div>
 
-    <!-- COL 4: Twitter + Log -->
+    <!-- COL 4: MERCADO -->
     <div class="gcol" id="col-social">
       <div class="soc-hdr">
         <span class="soc-icon">&#120143;</span>
@@ -394,11 +498,21 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:11px;heigh
         <div id="log"></div>
       </div>
     </div>
-  </div>
-</div>
 
-<!-- END -->
-<div id="screen-end" class="screen">
+  </div><!-- g-main -->
+
+  <!-- TAB BAR -->
+  <div class="tab-bar">
+    <button type="button" class="tab-btn active" data-tab="col-left"><span class="tab-icon">&#128200;</span><span class="tab-label">Datos</span></button>
+    <button type="button" class="tab-btn" data-tab="col-news"><span class="tab-icon">&#128240;</span><span class="tab-label">Noticias</span></button>
+    <button type="button" class="tab-btn" data-tab="col-dec"><span class="tab-icon">&#9881;</span><span class="tab-label">Decisiones</span></button>
+    <button type="button" class="tab-btn" data-tab="col-social"><span class="tab-icon">&#120143;</span><span class="tab-label">Mercado</span></button>
+  </div>
+
+</div><!-- s-game -->
+
+<!-- ═══ END ═══ -->
+<div id="s-end" class="screen">
   <div class="e-eye">Informe Final &mdash; BCRA Argentina</div>
   <div class="e-icon" id="e-icon">&#128163;</div>
   <div class="e-type" id="e-type">Fin</div>
@@ -407,8 +521,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:11px;heigh
   <div class="e-nar" id="e-nar">Su mandato concluy&oacute;.</div>
   <div class="e-stats" id="e-stats"></div>
   <div class="e-btns">
-    <button class="btn-new" id="btn-new">Nueva Gesti&oacute;n</button>
-    <button class="btn-mnu" id="btn-mnu">Men&uacute; Principal</button>
+    <button type="button" class="btn-new" id="btn-new">Nueva Gesti&oacute;n</button>
+    <button type="button" class="btn-mnu" id="btn-mnu">Men&uacute; Principal</button>
   </div>
 </div>
 
@@ -419,541 +533,654 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:11px;heigh
     <div class="m-title" id="m-title">Respuesta del Ejecutivo</div>
     <div class="m-body" id="m-body"></div>
     <div class="m-eff" id="m-eff"></div>
-    <button class="btn-modal" id="btn-modal">Tomar Nota</button>
+    <button type="button" class="btn-modal" id="btn-modal">Tomar Nota</button>
   </div>
 </div>
 
 <!-- MODAL COMUNICADO -->
-<div class="com-overlay" id="com-overlay">
+<div class="com-ov" id="com-ov">
   <div class="com-box">
     <div class="com-ttl">Comunicaci&oacute;n de Expectativas</div>
     <div class="com-sub">Directorio del BCRA &mdash; Sesi&oacute;n Ordinaria</div>
-    <div class="com-warn">Atenci&oacute;n: el mercado recordar&aacute; lo que anuncie. Si no cumple, perder&aacute; credibilidad y las expectativas inflacionarias se desanclar&aacute;n.</div>
+    <div class="com-warn">El mercado recordar&aacute; lo que anuncie. Si no cumple, perder&aacute; credibilidad y las expectativas se desanclar&aacute;n.</div>
     <div class="com-opts" id="com-opts"></div>
     <div class="com-btns">
-      <button class="btn-emit" id="btn-emit-com">Emitir Comunicado</button>
-      <button class="btn-skip" id="btn-skip-com">Sin comunicado</button>
+      <button type="button" class="btn-emit" id="btn-emit">Emitir Comunicado</button>
+      <button type="button" class="btn-skip" id="btn-skip">Sin comunicado</button>
     </div>
   </div>
 </div>
 
+<!-- MODAL ELECCIONES -->
+<div class="elec-ov" id="elec-ov">
+  <div class="elec-box">
+    <div class="elec-tp" id="elec-tp">ELECCIONES</div>
+    <div class="elec-ttl" id="elec-ttl">Argentina vota</div>
+    <div class="elec-sub" id="elec-sub">Los resultados afectar&aacute;n su margen pol&iacute;tico</div>
+    <div class="partidos" id="elec-partidos"></div>
+    <div class="elec-res" id="elec-res">
+      <div class="elec-res-ttl" id="elec-res-ttl"></div>
+      <div class="elec-res-body" id="elec-res-body"></div>
+      <div class="elec-res-eff" id="elec-res-eff"></div>
+    </div>
+    <button type="button" class="btn-elec" id="btn-elec">Tomar Nota y Continuar</button>
+  </div>
 </div>
+
+</div><!-- app -->
 <script>
 (function(){
 'use strict';
 
-// ── SLIDERS ──────────────────────────────────────────────────────────────────
+// ═══ DATA ════════════════════════════════════════════════════════════════════
+
+var TIPOS = {
+  expansivo:   { label:'Expansivo',    tasa:50,  crawl:3, emision:6, cepo:6,  inf_mod:1.5,  res_mod:-1   },
+  moderado:    { label:'Moderado',     tasa:70,  crawl:2, emision:3, cepo:7,  inf_mod:0,    res_mod:0    },
+  conservador: { label:'Conservador',  tasa:90,  crawl:2, emision:1, cepo:8,  inf_mod:-1,   res_mod:1.5  },
+  clasico:     { label:'Cl\u00e1sico', tasa:110, crawl:1, emision:0, cepo:5,  inf_mod:-2,   res_mod:2    },
+};
+
 var SLIDERS = [
-  { id:'tasa',    label:'Tasa de Pol\u00edtica Monetaria (TNA)', min:0,   max:200, step:5, init:70, unit:'%',
-    hint:'Tasa anual BCRA para dep\u00f3sitos a plazo',
-    tt:'Tasa alta frena inflaci\u00f3n pero da\u00f1a cr\u00e9dito y empleo. En 0% la econom\u00eda se calienta y los pesos huyen al d\u00f3lar. Por encima de 130% el efecto recesivo es severo.' },
-  { id:'crawl',   label:'Ritmo de Devaluaci\u00f3n Mensual',     min:0,   max:30,  step:1, init:2,  unit:'%/mes',
-    hint:'Velocidad de ajuste del tipo de cambio oficial',
-    tt:'Crawl lento genera atraso cambiario y sangra reservas. R\u00e1pido alimenta inflaci\u00f3n por pass-through al precio de importados.' },
-  { id:'emision', label:'Expansi\u00f3n Monetaria (sobre M2)',   min:0,   max:20,  step:1, init:3,  unit:'%/mes',
-    hint:'Tasa mensual de crecimiento de la base monetaria',
-    tt:'Emisi\u00f3n financia al Tesoro o paga intereses de LELIQs. Por encima del 6% mensual el efecto inflacionario es inevitable.' },
-  { id:'cepo',    label:'Administraci\u00f3n Cambiaria',         min:0,   max:10,  step:1, init:7,  unit:'/10',
-    hint:'0 = mercado libre   10 = cepo total',
-    tt:'El cepo protege reservas pero genera brecha y espanta inversi\u00f3n. Liberarlo de golpe puede provocar una corrida.' },
+  { id:'tasa',    label:'Tasa de Pol\u00edtica Monetaria (TNA)', min:0,   max:200, step:5, unit:'%',     hint:'Tasa anual BCRA para dep\u00f3sitos a plazo',          tt:'Tasa alta frena inflaci\u00f3n pero da\u00f1a cr\u00e9dito y empleo. En 0% los pesos huyen al d\u00f3lar. Encima de 130% el efecto recesivo es severo.' },
+  { id:'crawl',   label:'Ritmo de Devaluaci\u00f3n Mensual',     min:0,   max:30,  step:1, unit:'%/mes', hint:'Velocidad de ajuste del tipo de cambio oficial',       tt:'Crawl lento genera atraso cambiario y sangra reservas. R\u00e1pido alimenta inflaci\u00f3n por pass-through.' },
+  { id:'emision', label:'Expansi\u00f3n Monetaria (sobre M2)',   min:0,   max:20,  step:1, unit:'%/mes', hint:'Tasa mensual de crecimiento de la base monetaria',     tt:'Emisi\u00f3n financia al Tesoro o paga intereses de LELIQs. Por encima del 6% el efecto inflacionario es inevitable.' },
+  { id:'cepo',    label:'Administraci\u00f3n Cambiaria',         min:0,   max:10,  step:1, unit:'/10',   hint:'0 = mercado libre   10 = cepo total',                 tt:'El cepo protege reservas pero genera brecha y espanta inversi\u00f3n. Liberarlo de golpe puede provocar una corrida.' },
 ];
 
-// ── EVENTOS ───────────────────────────────────────────────────────────────────
 var EVENTS = [
-  { tag:'CAMPO', hl:'Liquidaci\u00f3n r\u00e9cord del agro: USD 3.200 M en 30 d\u00edas', lede:'Una cosecha excepcional gener\u00f3 una liquidaci\u00f3n in\u00e9dita. Las reservas respiran por primera vez en meses.', edu:'La <b>liquidaci\u00f3n del agro</b> convierte divisas de exportaci\u00f3n en pesos. Es c\u00edclica y principal fuente de d\u00f3lares. El productor retiene granos cuando el tipo de cambio parece atrasado.', efecto:{res:3.5,inf:-0.4,pop:6,desemp:-0.3}, tweets:[{av:'\uD83C\uDF31',nm:'Productores NOA',hd:'@campo_argentino',tx:'Liquidamos porque el tipo de cambio mejor\u00f3. No porque confiemos. Pero plata es plata.',lk:1205},{av:'\uD83D\uDCC8',nm:'Bloomberg',hd:'@bloomberg_arg',tx:'Inflows from agricultural sector reach historic levels. Reserves recovering.',lk:892}] },
-  { tag:'INDEC', hl:'IPC registra expansi\u00f3n superior a las proyecciones del mercado', lede:'El \u00edndice de precios exhibi\u00f3 una din\u00e1mica que el BCRA describe como "en proceso de convergencia".', edu:'El <b>IPC</b> mide el cambio en precios de una canasta representativa. En Argentina coexisten m\u00FAltiples mediciones que suelen diferir. La credibilidad del dato es un activo macroecon\u00f3mico en s\u00ed mismo.', efecto:{inf:2.2,pop:-12,desemp:0.3}, tweets:[{av:'\uD83D\uDED2',nm:'Ama de Casa BA',hd:'@mercadito_norte',tx:'Los precios del s\u00FAper no tienen nada que ver con lo que mide el INDEC.',lk:8901},{av:'\uD83D\uDCCA',nm:'Consultora Econ\u00f3mica',hd:'@consultora_eco',tx:'Inflaci\u00f3n 4pp por encima de consenso. El ancla de expectativas no funciona.',lk:1203}] },
-  { tag:'BRECHA', hl:'Administraci\u00f3n cambiaria bajo tensi\u00f3n: brecha supera el 130%', lede:'El tipo de cambio paralelo registra niveles que el BCRA describe como "no representativos de los fundamentos".', edu:'La <b>brecha cambiaria</b> por encima del 80-100% distorsiona toda la econom\u00eda: exportadores retienen e importadores sobrecompran al oficial para arbitrar contra el paralelo.', efecto:{brecha:35,pop:-8,tension:14}, tweets:[{av:'\uD83D\uDCB5',nm:'Arbolito Florida',hd:'@florida453',tx:'Compro d\u00f3lares. Hoy mejor que ayer. Ma\u00f1ana mejor que hoy.',lk:7823},{av:'\uD83D\uDE02',nm:'Economista Humor',hd:'@eco_satiro',tx:'El BCRA dijo que la brecha es "transitoria". Llevan diciendo eso desde 2011.',lk:15432}] },
-  { tag:'GREMIAL', hl:'CGT declara paro general de 36 horas: actividad paralizada', lede:'La central obrera ejecut\u00f3 la medida de fuerza en rechazo a la pol\u00edtica de ingresos.', edu:'Los <b>paros generales</b> tienen efecto directo sobre la popularidad y env\u00edan una se\u00f1al de debilidad pol\u00edtica a los mercados, lo que puede presionar sobre el tipo de cambio.', efecto:{pop:-12,tension:12,inf:0.8,desemp:0.4}, tweets:[{av:'\u270A',nm:'CGT Prensa',hd:'@cgt_prensa',tx:'El paro fue contundente. No pueden seguir con esta pol\u00edtica que destruye el salario real.',lk:12043},{av:'\uD83C\uDFED',nm:'Industrial Pyme',hd:'@pymes_argentinas',tx:'Un d\u00eda de paro cuesta lo que no tenemos.',lk:3421}] },
-  { tag:'SHOCK', hl:'Corrida sobre dep\u00f3sitos en el sistema financiero del interior', lede:'Ahorristas retiran pesos en b\u00fasqueda de d\u00f3lares. El riesgo de efecto domin\u00f3 es evaluado como "manejable" por el directorio.', edu:'Una <b>corrida bancaria</b> ocurre cuando los depositantes retiran fondos masivamente. El solo rumor genera la corrida que busca evitar: profe\u00eda autocumplida en teor\u00eda de juegos.', efecto:{res:-2,pop:-10,tension:18,desemp:0.6}, tweets:[{av:'\uD83C\uDFE6',nm:'Ahorrista',hd:'@ahorros_2001',tx:'Me lleg\u00f3 un audio que dice que el BCRA congela dep\u00f3sitos. No espero. Voy ahora.',lk:89234},{av:'\uD83D\uDD25',nm:'Trending AR',hd:'@trending_arg',tx:'CORRALITO trending. El BCRA dice que no. El mercado no le cree.',lk:34521}] },
-  { tag:'DEUDA', hl:'Vencimiento de USD 2.500 M activa debate sobre mecanismos de pago', lede:'El Tesoro requiere colaboraci\u00f3n del BCRA para honrar compromisos con acreedores externos.', edu:'Los <b>vencimientos en d\u00f3lares</b> generan tensi\u00f3n en reservas. Si el BCRA presta al Tesoro con Adelantos Transitorios, aumenta la emisi\u00f3n monetaria y la presi\u00f3n inflacionaria.', efecto:{res:-2.5,tension:10}, tweets:[{av:'\u2696',nm:'Analista Bonos',hd:'@holdout_watcher',tx:'El BCRA va a tener que elegir: quemar reservas o emitir. No hay opci\u00f3n C.',lk:2341},{av:'\uD83D\uDE29',nm:'Jubilado 2001',hd:'@jubilado_2001',tx:'Otra vez vencimientos. Otra vez nosotros los que pagamos.',lk:9876}] },
-  { tag:'FED', hl:'La Fed sube 75bps: capitales golondrina buscan la puerta', lede:'La Reserva Federal ejecut\u00f3 su mayor suba en dos d\u00e9cadas. Los flujos hacia emergentes se revierten abruptamente.', edu:'Las subas de tasa de la <b>Fed</b> hacen m\u00e1s atractivo el d\u00f3lar y retiran capital de mercados emergentes. Argentina lo siente de manera amplificada por su historial crediticio.', efecto:{res:-1.2,brecha:15,tension:8}, tweets:[{av:'\uD83C\uDFE6',nm:'JPMorgan',hd:'@jpmorgan_em',tx:'Fed hikes 75bps. Argentina already in risk-off territory. Limited additional downside.',lk:892},{av:'\uD83C\uDDE6\uD83C\uDDF7',nm:'BCRA Staff',hd:'@bcra_staff',tx:'El BCRA monitorea el contexto internacional y tiene herramientas para responder.',lk:134}] },
-  { tag:'CHINA', hl:'Beijing ampl\u00eda el swap de yuanes en USD 5.000 M', lede:'El acuerdo permite pagar importaciones chinas sin gastar d\u00f3lares propios.', edu:'Un <b>swap de monedas</b> engrosa las reservas brutas (aunque no las netas). Es ox\u00edgeno de corto plazo. Argentina usa el swap principalmente para pagar importaciones de China.', efecto:{res:4.5,pop:4}, tweets:[{av:'\uD83D\uDC09',nm:'YPF',hd:'@ypf_oficial',tx:'La asociaci\u00f3n China-Argentina alcanza nuevos hitos.',lk:2341},{av:'\uD83D\uDE05',nm:'Eco Popular',hd:'@eco_simple',tx:'Nos dieron m\u00e1s plata que tenemos que devolver. Pero festejemos igual.',lk:34521}] },
-  { tag:'LELIQ', hl:'Pasivos remunerados del BCRA superan $30 billones', lede:'El stock de LELIQs y Pases exhibe crecimiento que los analistas califican como "no sostenible en el mediano plazo".', edu:'Las <b>LELIQs y Pases</b> son deuda del BCRA con bancos. Absorben pesos pero el inter\u00e9s genera un d\u00e9ficit cuasifiscal que en alg\u00FAn punto debe monetizarse, generando inflaci\u00f3n futura.', efecto:{inf:1.2,tension:10}, tweets:[{av:'\uD83D\uDCCA',nm:'Research Macro',hd:'@research_macro',tx:'La bola de nieve de los pasivos remunerados no para. Acumulamos combustible para la pr\u00f3xima explosi\u00f3n.',lk:4521},{av:'\uD83D\uDE05',nm:'Eco Junior',hd:'@eco_recibido',tx:'Expliqu\u00e9 las LELIQs a mi familia. Nadie entendi\u00f3. Creo que es la respuesta correcta.',lk:15234}] },
-  { tag:'SOJA', hl:'D\u00f3lar soja: tipo de cambio diferencial para el sector agropecuario', lede:'El esquema de cotizaci\u00f3n preferencial busca incentivar la liquidaci\u00f3n de granos retenidos.', edu:'Los <b>tipos de cambio diferenciales</b> generan divisas de emergencia pero distorsionan precios relativos. Son parches que resuelven el corto plazo a costo del mediano plazo.', efecto:{res:3,inf:1,pop:2,desemp:-0.2}, tweets:[{av:'\uD83C\uDF3E',nm:'Productor Sojero',hd:'@campo_soja',tx:'El d\u00f3lar soja funciona. Liquidamos. Pero la pr\u00f3xima vez queremos estabilidad.',lk:3421},{av:'\uD83E\uDD26',nm:'Importador',hd:'@importador_arg',tx:'El campo tiene tipo especial. Yo importo a otro. La brecha es una locura.',lk:5632}] },
-  { tag:'VACA MUERTA', hl:'R\u00e9cord en Vaca Muerta: primer embarque de GNL a Asia', lede:'Argentina export\u00f3 su primer cargamento de gas licuado. Las divisas energ\u00e9ticas mejoran la balanza de pagos.', edu:'<b>Vaca Muerta</b> es la segunda reserva mundial de shale gas. Su desarrollo podr\u00eda convertir a Argentina en exportador neto de energ\u00eda, resolviendo estructuralmente el problema cambiario.', efecto:{res:2.5,pop:7,tension:-8,desemp:-0.5}, tweets:[{av:'\u26A1',nm:'YPF',hd:'@ypf_oficial',tx:'Primer embarque hist\u00f3rico de GNL argentino rumbo a Asia. Historia.',lk:24032},{av:'\uD83D\uDCB0',nm:'Energy Latam',hd:'@energy_latam',tx:'The energy story in Argentina is real. Vaca Muerta numbers are impressive.',lk:1203}] },
-  { tag:'PETROLEO', hl:'Conflicto en Medio Oriente dispara el petr\u00f3leo a USD 120', lede:'La escalada b\u00e9lica genera un shock de costos energ\u00e9ticos. Argentina enfrenta presi\u00f3n sobre su balanza de pagos.', edu:'Los <b>shocks de commodities</b> afectan a Argentina por dos v\u00edas: sube el costo de importar energ\u00eda (negativo) pero tambi\u00e9n el precio de exportar granos (positivo). El balance neto suele ser negativo.', efecto:{res:-1.5,inf:1.2,tension:8,desemp:0.3}, tweets:[{av:'\u26A1',nm:'Analista',hd:'@energia_global',tx:'Brent en 120. Impacto mixto para Argentina pero el costo energ\u00e9tico pesa m\u00e1s.',lk:1203},{av:'\u26FD',nm:'Conductor',hd:'@nafta_cara',tx:'El petr\u00f3leo subi\u00f3. En dos semanas me entero cu\u00e1nto m\u00e1s cuesta cargar nafta.',lk:18902}] },
-  { tag:'BLANQUEO', hl:'Blanqueo de capitales: ingresan USD 1.800 M en 15 d\u00edas', lede:'Los d\u00f3lares del colch\u00f3n se volcaron al sector inmobiliario y al sistema bancario.', edu:'Los <b>blanqueos</b> generan reservas a corto plazo pero crean expectativas de futuros programas, desincentivando la declaraci\u00f3n voluntaria de activos.', efecto:{res:1.8,pop:3}, tweets:[{av:'\uD83C\uDFE0',nm:'Inmobiliaria BA',hd:'@propiedades_ba',tx:'El mercado inmobiliario explos. Ventas en d\u00f3lares al contado.',lk:3421},{av:'\uD83D\uDE10',nm:'Contribuyente',hd:'@pago_mis_impuestos',tx:'Yo pago todos mis impuestos y estos blanquean sin consecuencias. Brillante sistema.',lk:45231}] },
-  { tag:'CONTAGIO', hl:'Crisis en Brasil contagia a Argentina: p\u00e1nico en mercados regionales', lede:'La corrida contra el real brasile\u00f1o arrastr\u00f3 al peso. Inversores institucionales liquidaron posiciones en toda la regi\u00f3n.', edu:'El <b>efecto contagio regional</b> golpea a Argentina desproporcionadamente. Cuando Brasil estornuda, Argentina agarra pulmon\u00eda por su historial de defaults y mayor vulnerabilidad externa.', efecto:{res:-1.8,brecha:20,pop:-7,tension:14}, tweets:[{av:'\uD83C\uDDE7\uD83C\uDDF7',nm:'Bloomberg Latam',hd:'@bloomberg_latam',tx:'Brazilian real hits 6-month low. Argentina peso under pressure as contagion spreads.',lk:2341},{av:'\uD83E\uDD26',nm:'Macro Latam',hd:'@macro_latam',tx:'Cuando Brasil estornuda, Argentina agarra pulmon\u00eda. Sin falla.',lk:12034}] },
+  { tag:'CAMPO',      hl:'Liquidaci\u00f3n r\u00e9cord del agro: USD 3.200 M en 30 d\u00edas',                          lede:'Una cosecha excepcional gener\u00f3 una liquidaci\u00f3n in\u00e9dita. Las reservas respiran.',                                             edu:'La <b>liquidaci\u00f3n del agro</b> convierte divisas en pesos. El productor retiene granos cuando el tipo de cambio parece atrasado.',         ef:{res:3.5,inf:-0.4,pop:6,desemp:-0.3},   tw:[{av:'\uD83C\uDF31',nm:'Productores NOA',hd:'@campo_arg',tx:'Liquidamos porque el tipo de cambio mejor\u00f3. No porque confiemos.',lk:1205},{av:'\uD83D\uDCC8',nm:'Bloomberg',hd:'@bloomberg_arg',tx:'Inflows from agricultural sector reach historic levels.',lk:892}] },
+  { tag:'INDEC',      hl:'IPC registra expansi\u00f3n superior a proyecciones del mercado',                             lede:'El \u00edndice de precios exhibi\u00f3 una din\u00e1mica que el BCRA describe como "en proceso de convergencia".',                            edu:'El <b>IPC</b> mide el cambio en precios de una canasta. En Argentina la credibilidad del dato es un activo macroecon\u00f3mico en s\u00ed mismo.',  ef:{inf:2.2,pop:-12,desemp:0.3},           tw:[{av:'\uD83D\uDED2',nm:'Ama de Casa BA',hd:'@mercadito',tx:'Los precios del s\u00FAper no tienen nada que ver con el INDEC.',lk:8901},{av:'\uD83D\uDCCA',nm:'Consultora',hd:'@consultora_eco',tx:'Inflaci\u00f3n 4pp por encima de consenso. El ancla no funciona.',lk:1203}] },
+  { tag:'BRECHA',     hl:'Administraci\u00f3n cambiaria bajo tensi\u00f3n: brecha supera el 130%',                       lede:'El tipo de cambio paralelo registra niveles que el BCRA describe como "no representativos de los fundamentos".',                           edu:'La <b>brecha cambiaria</b> por encima del 80% distorsiona toda la econom\u00eda: exportadores retienen e importadores sobrecompran al oficial.', ef:{brecha:35,pop:-8,tension:14},          tw:[{av:'\uD83D\uDCB5',nm:'Arbolito Florida',hd:'@florida453',tx:'Compro d\u00f3lares. Hoy mejor que ayer.',lk:7823},{av:'\uD83D\uDE02',nm:'Eco S\u00e1tira',hd:'@eco_satiro',tx:'El BCRA dijo que la brecha es "transitoria". Llevan as\u00ed desde 2011.',lk:15432}] },
+  { tag:'GREMIAL',    hl:'CGT declara paro general de 36 horas: actividad paralizada',                                  lede:'La central obrera ejecut\u00f3 la medida de fuerza en rechazo a la pol\u00edtica de ingresos.',                                              edu:'Los <b>paros generales</b> tienen efecto directo sobre popularidad y env\u00edan una se\u00f1al de debilidad pol\u00edtica a los mercados.',          ef:{pop:-12,tension:12,inf:0.8,desemp:0.4}, tw:[{av:'\u270A',nm:'CGT Prensa',hd:'@cgt_prensa',tx:'El paro fue contundente. No pueden seguir destruyendo el salario real.',lk:12043},{av:'\uD83C\uDFED',nm:'Pymes',hd:'@pymes_arg',tx:'Un d\u00eda de paro cuesta lo que no tenemos.',lk:3421}] },
+  { tag:'SHOCK',      hl:'Corrida sobre dep\u00f3sitos en el sistema financiero del interior',                           lede:'Ahorristas retiran pesos en b\u00fasqueda de d\u00f3lares. El riesgo de efecto domin\u00f3 es "manejable".',                                  edu:'Una <b>corrida bancaria</b> es una profec\u00eda autocumplida: el rumor genera la corrida que busca evitar. Teor\u00eda de Diamond-Dybvig.',        ef:{res:-2,pop:-10,tension:18,desemp:0.6},  tw:[{av:'\uD83C\uDFE6',nm:'Ahorrista',hd:'@ahorros_2001',tx:'Me lleg\u00f3 un audio que dice que congelan dep\u00f3sitos. No espero.',lk:89234},{av:'\uD83D\uDD25',nm:'Trending',hd:'@trending_arg',tx:'CORRALITO trending. El BCRA dice que no. El mercado no le cree.',lk:34521}] },
+  { tag:'DEUDA',      hl:'Vencimiento de USD 2.500 M activa debate sobre mecanismos de pago',                           lede:'El Tesoro requiere colaboraci\u00f3n del BCRA para honrar compromisos con acreedores externos.',                                              edu:'Los <b>vencimientos en d\u00f3lares</b> generan tensi\u00f3n en reservas. Si el BCRA presta al Tesoro con Adelantos Transitorios, aumenta la emisi\u00f3n.', ef:{res:-2.5,tension:10},              tw:[{av:'\u2696',nm:'Analista Bonos',hd:'@holdout_watch',tx:'El BCRA debe elegir: quemar reservas o emitir. No hay opci\u00f3n C.',lk:2341},{av:'\uD83D\uDE29',nm:'Jubilado',hd:'@jubilado_2001',tx:'Otra vez vencimientos. Otra vez nosotros los que pagamos.',lk:9876}] },
+  { tag:'FED',        hl:'La Fed sube 75bps: capitales golondrina buscan la puerta',                                     lede:'La Reserva Federal ejecut\u00f3 su mayor suba en dos d\u00e9cadas. Los flujos hacia emergentes se revierten.',                                  edu:'Las subas de la <b>Fed</b> hacen m\u00e1s atractivo el d\u00f3lar y retiran capital de emergentes. Argentina lo siente de manera amplificada.',     ef:{res:-1.2,brecha:15,tension:8},         tw:[{av:'\uD83C\uDFE6',nm:'JPMorgan',hd:'@jpmorgan_em',tx:'Fed hikes 75bps. Argentina already in risk-off territory.',lk:892}] },
+  { tag:'CHINA',      hl:'Beijing ampl\u00eda el swap de yuanes en USD 5.000 M',                                        lede:'El acuerdo permite pagar importaciones chinas sin gastar d\u00f3lares propios.',                                                             edu:'Un <b>swap de monedas</b> engrosa reservas brutas (no las netas). Es ox\u00edgeno de corto plazo con costos de largo plazo.',                      ef:{res:4.5,pop:4},                        tw:[{av:'\uD83D\uDC09',nm:'YPF',hd:'@ypf_oficial',tx:'La asociaci\u00f3n China-Argentina alcanza nuevos hitos.',lk:2341}] },
+  { tag:'LELIQ',      hl:'Pasivos remunerados del BCRA superan $30 billones',                                           lede:'El stock de LELIQs y Pases exhibe un crecimiento que los analistas califican como "no sostenible".',                                        edu:'Las <b>LELIQs y Pases</b> son deuda del BCRA con bancos. El inter\u00e9s genera d\u00e9ficit cuasifiscal que eventualmente debe monetizarse.',       ef:{inf:1.2,tension:10},                   tw:[{av:'\uD83D\uDCCA',nm:'Research Macro',hd:'@research_macro',tx:'La bola de nieve de los pasivos remunerados no para.',lk:4521}] },
+  { tag:'SOJA',       hl:'D\u00f3lar soja: tipo de cambio diferencial para el sector agropecuario',                     lede:'El esquema de cotizaci\u00f3n preferencial busca incentivar la liquidaci\u00f3n de granos retenidos.',                                           edu:'Los <b>tipos diferenciales</b> generan divisas de emergencia pero distorsionan precios relativos. Parches de corto plazo.',                       ef:{res:3,inf:1,pop:2,desemp:-0.2},        tw:[{av:'\uD83C\uDF3E',nm:'Productor',hd:'@campo_soja',tx:'El d\u00f3lar soja funciona. Liquidamos. Pero necesitamos estabilidad.',lk:3421}] },
+  { tag:'VACA MUERTA', hl:'R\u00e9cord en Vaca Muerta: primer embarque de GNL a Asia',                                  lede:'Argentina export\u00f3 su primer cargamento de gas licuado. Las divisas energ\u00e9ticas mejoran la balanza.',                                   edu:'<b>Vaca Muerta</b> es la segunda reserva mundial de shale gas. Su desarrollo podr\u00eda resolver estructuralmente el problema cambiario.',          ef:{res:2.5,pop:7,tension:-8,desemp:-0.5}, tw:[{av:'\u26A1',nm:'YPF',hd:'@ypf_oficial',tx:'Primer embarque hist\u00f3rico de GNL argentino rumbo a Asia.',lk:24032}] },
+  { tag:'PETR\u00d3LEO', hl:'Conflicto en Medio Oriente dispara el petr\u00f3leo a USD 120',                            lede:'La escalada b\u00e9lica genera un shock de costos energ\u00e9ticos. Argentina siente el impacto.',                                              edu:'Los <b>shocks de commodities</b> afectan a Argentina por dos v\u00edas: sube el costo de importar energ\u00eda y el precio de exportar granos.',   ef:{res:-1.5,inf:1.2,tension:8,desemp:0.3}, tw:[{av:'\u26FD',nm:'Conductor',hd:'@nafta_cara',tx:'El petr\u00f3leo subi\u00f3. En dos semanas sé cu\u00e1nto m\u00e1s cuesta cargar nafta.',lk:18902}] },
+  { tag:'BLANQUEO',   hl:'Blanqueo de capitales: ingresan USD 1.800 M en 15 d\u00edas',                                 lede:'Los d\u00f3lares del colch\u00f3n se volcaron al sector inmobiliario y bancario.',                                                              edu:'Los <b>blanqueos</b> generan reservas a corto plazo pero crean expectativas de futuros programas, desincentivando la declaraci\u00f3n voluntaria.', ef:{res:1.8,pop:3},                        tw:[{av:'\uD83D\uDE10',nm:'Contribuyente',hd:'@pago_mis_imp',tx:'Yo pago todos mis impuestos y estos blanquean sin consecuencias.',lk:45231}] },
+  { tag:'CONTAGIO',   hl:'Crisis en Brasil contagia a Argentina: p\u00e1nico en mercados regionales',                   lede:'La corrida contra el real brasile\u00f1o arrastr\u00f3 al peso.',                                                                              edu:'El <b>efecto contagio regional</b> golpea a Argentina desproporcionadamente. Cuando Brasil estornuda, Argentina agarra pulmon\u00eda.',              ef:{res:-1.8,brecha:20,pop:-7,tension:14}, tw:[{av:'\uD83E\uDD26',nm:'Macro Latam',hd:'@macro_latam',tx:'Cuando Brasil estornuda, Argentina agarra pulmon\u00eda. Sin falla.',lk:12034}] },
 ];
 
-// ── COMUNICADOS ───────────────────────────────────────────────────────────────
 var COMUNICADOS = [
-  {
-    id:'baja_tasa',
-    texto:'El BCRA estudia una reducci\u00f3n de la tasa de pol\u00edtica monetaria en los pr\u00f3ximos trimestres',
-    condicion: function(G){ return G.decisions.tasa < G.tasa_anterior - 5; },
-    efecto_ok:{ inf:-0.8, pop:5, brecha:-8, tension:-5 },
-    efecto_fail:{ inf:2.5, pop:-12, tension:15, brecha:20 },
-    tweet_ok:'\uD83D\uDCC9 BCRA cumple: baja la tasa. Mercado aliviado. El ancla de expectativas funcion\u00f3.',
-    tweet_fail:'\uD83D\uDD25 BCRA anunci\u00f3 baja de tasa y NO la baj\u00f3. Credibilidad destrozada. Brecha explota.'
-  },
-  {
-    id:'sube_tasa',
-    texto:'El BCRA contempla una suba de tasa para reforzar el ancla nominal contra la inflaci\u00f3n',
-    condicion: function(G){ return G.decisions.tasa > G.tasa_anterior + 5; },
-    efecto_ok:{ inf:-1.5, pop:-4, tension:-8 },
-    efecto_fail:{ inf:3, pop:-10, tension:18, brecha:15 },
-    tweet_ok:'\uD83D\uDCC8 BCRA sube tasa como anunci\u00f3. Se\u00f1al contractiva. Mercado cree el compromiso.',
-    tweet_fail:'\uD83D\uDE31 BCRA anunci\u00f3 suba de tasa y NO la subi\u00f3. Credibilidad en m\u00ednimos hist\u00f3ricos.'
-  },
-  {
-    id:'acum_reservas',
-    texto:'El BCRA anuncia programa de acumulaci\u00f3n de reservas por USD 2.000 M en el trimestre',
-    condicion: function(G){ return G.decisions.interv <= -2; },
-    efecto_ok:{ res:1, pop:5, tension:-6, brecha:-5 },
-    efecto_fail:{ tension:12, pop:-8, brecha:15 },
-    tweet_ok:'\uD83D\uDCAA BCRA cumple la meta de reservas. Credibilidad reforzada. \u00bfEl inicio de un cambio?',
-    tweet_fail:'\uD83D\uDE44 BCRA prometi\u00f3 acumular reservas y no lo hizo. El mercado ya no cree nada.'
-  },
-  {
-    id:'cepo_gradual',
-    texto:'El BCRA anuncia una reducci\u00f3n gradual de las restricciones cambiarias en los pr\u00f3ximos 6 meses',
-    condicion: function(G){ return G.decisions.cepo < G.cepo_anterior - 1; },
-    efecto_ok:{ brecha:-15, pop:8, tension:-8, res:-0.5 },
-    efecto_fail:{ brecha:25, pop:-10, tension:15 },
-    tweet_ok:'\uD83D\uDD14 BCRA abre gradualmente el cepo como prometi\u00f3. Flujos se normalizan.',
-    tweet_fail:'\uD83D\uDE21 BCRA prometi\u00f3 abrir el cepo y no lo hizo. La brecha se dispara por la desconfianza.'
-  },
-  {
-    id:'meta_inflacion',
-    texto:'El BCRA anuncia una meta de inflaci\u00f3n del 3% mensual para el pr\u00f3ximo trimestre',
-    condicion: function(G){ return G.inf < 4; },
-    efecto_ok:{ inf:-0.5, pop:6, tension:-5 },
-    efecto_fail:{ inf:1.5, pop:-8, tension:12, brecha:10 },
-    tweet_ok:'\uD83C\uDFAF BCRA cumple la meta de inflaci\u00f3n. El ancla nominal funciona. Historia.',
-    tweet_fail:'\uD83D\uDCA5 BCRA prometio meta de 3% y super\u00f3 el doble. Ya nadie cree en sus proyecciones.'
-  },
+  { id:'baja_tasa',    texto:'El BCRA estudia una reducci\u00f3n de la tasa de pol\u00edtica monetaria en los pr\u00f3ximos trimestres',
+    cond: function(G){ return G.decisions.tasa < G.tasa_ant - 5; },
+    ok:{ inf:-0.8, pop:5, brecha:-8, tension:-5 }, fail:{ inf:2.5, pop:-12, tension:15, brecha:20 },
+    tw_ok:'\uD83D\uDCC9 BCRA cumple: baja la tasa. El ancla de expectativas funcion\u00f3.', tw_fail:'\uD83D\uDD25 BCRA anunci\u00f3 baja de tasa y NO la baj\u00f3. Credibilidad destrozada.' },
+  { id:'sube_tasa',    texto:'El BCRA contempla una suba de tasa para reforzar el ancla nominal contra la inflaci\u00f3n',
+    cond: function(G){ return G.decisions.tasa > G.tasa_ant + 5; },
+    ok:{ inf:-1.5, pop:-4, tension:-8 }, fail:{ inf:3, pop:-10, tension:18, brecha:15 },
+    tw_ok:'\uD83D\uDCC8 BCRA sube tasa como anunci\u00f3. Mercado cree el compromiso.', tw_fail:'\uD83D\uDE31 BCRA anunci\u00f3 suba y NO la subi\u00f3. Credibilidad en m\u00ednimos.' },
+  { id:'acum_res',     texto:'El BCRA anuncia programa de acumulaci\u00f3n de reservas por USD 2.000 M en el trimestre',
+    cond: function(G){ return G.decisions.interv <= -2; },
+    ok:{ res:1, pop:5, tension:-6, brecha:-5 }, fail:{ tension:12, pop:-8, brecha:15 },
+    tw_ok:'\uD83D\uDCAA BCRA cumple la meta de reservas. Credibilidad reforzada.', tw_fail:'\uD83D\uDE44 BCRA prometi\u00f3 acumular reservas y no lo hizo.' },
+  { id:'cepo_gradual', texto:'El BCRA anuncia una reducci\u00f3n gradual de las restricciones cambiarias en los pr\u00f3ximos 6 meses',
+    cond: function(G){ return G.decisions.cepo < G.cepo_ant - 1; },
+    ok:{ brecha:-15, pop:8, tension:-8, res:-0.5 }, fail:{ brecha:25, pop:-10, tension:15 },
+    tw_ok:'\uD83D\uDD14 BCRA abre gradualmente el cepo como prometi\u00f3.', tw_fail:'\uD83D\uDE21 BCRA prometi\u00f3 abrir el cepo y no lo hizo. Brecha se dispara.' },
+  { id:'meta_inf',     texto:'El BCRA anuncia una meta de inflaci\u00f3n del 3% mensual para el pr\u00f3ximo trimestre',
+    cond: function(G){ return G.inf < 4; },
+    ok:{ inf:-0.5, pop:6, tension:-5 }, fail:{ inf:1.5, pop:-8, tension:12, brecha:10 },
+    tw_ok:'\uD83C\uDFAF BCRA cumple la meta de inflaci\u00f3n. El ancla nominal funciona.', tw_fail:'\uD83D\uDCA5 BCRA prometi\u00f3 meta del 3% y super\u00f3 el doble.' },
 ];
 
-// ── ENDINGS ───────────────────────────────────────────────────────────────────
-var ENDINGS = [
-  { cond:function(G){return G.inf>=30;}, lose:true, icon:'\uD83D\uDD25', type:'Fin Catastr\u00f3fico', title:'HIPERINFLACI\u00d3N', color:'#C0392B', nar:'Los precios se actualizan cada hora. Los comercios exhiben sus precios en d\u00f3lares. El peso experimenta una <strong>correcci\u00f3n t\u00e9cnica terminal</strong>. Tu nombre quedar\u00e1 en los libros de historia de la econom\u00eda argentina. En el cap\u00edtulo de advertencias. El desempleo alcanz\u00f3 el ' },
-  { cond:function(G){return G.tension>=98;}, lose:true, icon:'\uD83D\uDCA3', type:'Colapso Sist\u00e9mico', title:'TRANSICI\u00d3N ORDENADA', color:'#C0392B', nar:'La tensi\u00f3n acumulada super\u00f3 el umbral de ruptura institucional. Corrida cambiaria, restricciones bancarias y movilizaci\u00f3n social simult\u00e1neas. El organismo dispuso una <strong>transici\u00f3n ordenada</strong>. El mercado la llama de otra manera.' },
-  { cond:function(G){return G.desemp>=20;}, lose:true, icon:'\uD83D\uDCC9', type:'Crisis Social', title:'COLAPSO DEL EMPLEO', color:'#C0392B', nar:'El desempleo super\u00f3 el 20%. Las calles se llenaron de protestas. El costo social de la pol\u00edtica monetaria result\u00f3 <strong>pol\u00edticamente insostenible</strong>. El gabinete en pleno present\u00f3 la renuncia.' },
+var PARTIDOS = [
+  { id:'expansivo',    nombre:'Partido Expansivo',    color:'#eb5757', ide:'Gasto p\u00FAblico expansivo, subsidios amplios, tipo administrado.',
+    leg:  { txt:'El Congreso aprob\u00f3 aumento del gasto social. BCRA financiar\u00e1 parte del d\u00e9ficit adicional.', ef:{emision:3,pop:8,tension:6,desemp:-0.5} },
+    pres: { txt:'Shock expansivo: congelamiento de tarifas + subsidios m\u00e1ximos + aumento del gasto.', ef:{emision:5,pop:12,tension:10,inf:2,desemp:-1} } },
+  { id:'conservador',  nombre:'Partido Conservador',  color:'#4fc3f7', ide:'Ajuste fiscal, liberalizaci\u00f3n cambiaria, baja del gasto.',
+    leg:  { txt:'El Congreso aprob\u00f3 ley de ajuste fiscal. Recorte del gasto en 1.5 puntos del PBI.', ef:{emision:-2,tension:-5,pop:-8,desemp:0.5} },
+    pres: { txt:'Shock ortodoxo: libera el cepo, ajusta el gasto y sube la tasa.', ef:{emision:-4,brecha:-25,pop:-15,tension:-8,desemp:1.5,res:2} } },
+  { id:'populista',    nombre:'Partido Populista',    color:'#ffcc02', ide:'Emisi\u00f3n masiva. Control de precios. Prohibici\u00f3n de importaciones.',
+    leg:  { txt:'El Congreso aprob\u00f3 controles de precios y restricciones a las importaciones.', ef:{inf:-0.8,brecha:20,tension:12,pop:5} },
+    pres: { txt:'Shock populista: emisi\u00f3n masiva, cepo total, prohibici\u00f3n de importaciones. BCRA pierde independencia.', ef:{emision:8,inf:4,brecha:40,tension:20,pop:10,res:-3} } },
+  { id:'nacionalista', nombre:'Partido Nacionalista', color:'#81c784', ide:'Soberan\u00eda monetaria. Renegociaci\u00f3n de deuda. Desdolarizaci\u00f3n.',
+    leg:  { txt:'El Congreso aprob\u00f3 ley para renegociar la deuda soberana. Riesgo pa\u00eds sube.', ef:{res:2,tension:15,brecha:15,pop:4} },
+    pres: { txt:'Shock soberanista: renegociaci\u00f3n de deuda + desdolarizaci\u00f3n forzada. Riesgo pa\u00eds explota.', ef:{res:-2,brecha:30,tension:25,pop:6,inf:2} } },
 ];
 
-// ── FISCAL ────────────────────────────────────────────────────────────────────
 var FISCAL = {
-  ajuste:[
-    { prob:0.6, pop_min:40, icon:'\uD83D\uDC4D', title:'El Ejecutivo acepta el ajuste', body:'El Ministerio de Econom\u00eda acord\u00f3 reducir el d\u00e9ficit primario en 0.5 puntos del PBI. El BCRA tendr\u00e1 menor presi\u00f3n de financiamiento.', eff:'Emisi\u00f3n -2pp \u00b7 Tensi\u00f3n -8 \u00b7 Popularidad -5 \u00b7 Desempleo +0.3%', delta:{emision:-2,tension:-8,pop:-5,desemp:0.3} },
-    { prob:0.4, pop_min:0,  icon:'\uD83D\uDC4E', title:'El Ejecutivo rechaza el ajuste', body:'"No es el momento pol\u00edtico adecuado para una reducci\u00f3n del gasto." El BCRA deber\u00e1 continuar financiando el d\u00e9ficit.', eff:'Sin cambios. El mercado toma nota del rechazo.', delta:{tension:5,pop:-3} },
+  ajuste: [
+    { p:0.6, pop_min:40, icon:'\uD83D\uDC4D', title:'El Ejecutivo acepta el ajuste', body:'El Ministerio de Econom\u00eda acord\u00f3 reducir el d\u00e9ficit primario en 0.5 puntos del PBI.', eff:'Emisi\u00f3n -2pp \u00b7 Tensi\u00f3n -8 \u00b7 Pop -5 \u00b7 Desempleo +0.3%', dt:{emision:-2,tension:-8,pop:-5,desemp:0.3} },
+    { p:0.4, pop_min:0,  icon:'\uD83D\uDC4E', title:'El Ejecutivo rechaza el ajuste', body:'"No es el momento pol\u00edtico adecuado." El BCRA deber\u00e1 continuar financiando el d\u00e9ficit.', eff:'Sin cambios.', dt:{tension:5,pop:-3} },
   ],
-  expansion:[
-    { prob:0.75, pop_min:0,  icon:'\uD83C\uDF89', title:'El Ejecutivo acepta la expansi\u00f3n', body:'Se aprob\u00f3 un incremento del gasto social. La medida mejora la imagen pero requiere financiamiento adicional del BCRA.', eff:'Emisi\u00f3n +3pp \u00b7 Popularidad +8 \u00b7 Desempleo -0.4%', delta:{emision:3,pop:8,desemp:-0.4} },
-    { prob:0.25, pop_min:55, icon:'\uD83D\uDC4E', title:'El Ejecutivo rechaza la expansi\u00f3n', body:'No hay espacio fiscal disponible. Se recomienda explorar otras v\u00edas de est\u00edmulo.', eff:'Sin cambios.', delta:{} },
-  ],
-};
-
-var CTXT_TWEETS = {
-  inf_alta:[
-    {av:'\uD83D\uDE24',nm:'Trabajador',hd:'@sueldo_en_pesos',tx:'El sueldo me subi\u00f3 10% y la inflaci\u00f3n va 25% mensual. Matem\u00e1ticamente me est\u00e1n robando.',lk:34521},
-    {av:'\uD83D\uDCCA',nm:'Economist LATAM',hd:'@latam_macro',tx:'Monthly inflation in Argentina accelerating. Anchoring expectations will require significant policy credibility.',lk:2341},
-  ],
-  res_bajas:[
-    {av:'\uD83D\uDCB8',nm:'Trader',hd:'@fx_trader_arg',tx:'Reservas netas en rojo. El BCRA est\u00e1 vendiendo lo que no tiene.',lk:8901},
-    {av:'\uD83C\uDFDB',nm:'BCRA',hd:'@bcra_oficial',tx:'Las reservas se encuentran en niveles adecuados para respaldar el programa econ\u00f3mico.',lk:145},
-  ],
-  pop_baja:[
-    {av:'\uD83D\uDCE3',nm:'Oposici\u00f3n',hd:'@oposicion_ar',tx:'El BCRA ha demostrado su incapacidad. Pedimos la renuncia inmediata del presidente del organismo.',lk:18902},
-    {av:'\uD83D\uDE24',nm:'Ciudadano',hd:'@ciudadano_harto',tx:'No importa qui\u00e9n est\u00e9 en el BCRA. El resultado siempre es el mismo. La plata no vale nada.',lk:45231},
-  ],
-  desemp_alto:[
-    {av:'\uD83D\uDC77',nm:'Trabajador fabril',hd:'@laburant_metal',tx:'Cerraron la f\u00e1brica. 15 a\u00f1os de antig\u00FCedad. El ajuste no lo pagamos los que lo decidieron.',lk:45231},
-    {av:'\uD83D\uDCCA',nm:'CAME',hd:'@came_pymes',tx:'Los cierres de PyMEs de este trimestre son consecuencia directa de la pol\u00edtica monetaria.',lk:8921},
-  ],
-  buena:[
-    {av:'\uD83D\uDCC8',nm:'Analista',hd:'@bull_arg',tx:'Sorprendente: la gesti\u00f3n del BCRA est\u00e1 dando resultados. Inflaci\u00f3n cediendo, reservas acumulando.',lk:3421},
-    {av:'\uD83C\uDF10',nm:'Bloomberg',hd:'@bloomberg_latam',tx:'Argentina macro: showing unexpected improvement. BCRA policy credibility gaining traction.',lk:1203},
+  expansion: [
+    { p:0.75, pop_min:0,  icon:'\uD83C\uDF89', title:'El Ejecutivo acepta la expansi\u00f3n', body:'Se aprob\u00f3 un incremento del gasto social. Requiere financiamiento adicional del BCRA.', eff:'Emisi\u00f3n +3pp \u00b7 Pop +8 \u00b7 Desempleo -0.4%', dt:{emision:3,pop:8,desemp:-0.4} },
+    { p:0.25, pop_min:55, icon:'\uD83D\uDC4E', title:'El Ejecutivo rechaza la expansi\u00f3n', body:'No hay espacio fiscal disponible.', eff:'Sin cambios.', dt:{} },
   ],
 };
 
-// ── STATE ─────────────────────────────────────────────────────────────────────
+var CTX_TWEETS = {
+  inf_alta: [{av:'\uD83D\uDE24',nm:'Trabajador',hd:'@sueldo_pesos',tx:'El sueldo me subi\u00f3 10% y la inflaci\u00f3n va 25%. Matem\u00e1ticamente me est\u00e1n robando.',lk:34521}],
+  res_bajas: [{av:'\uD83D\uDCB8',nm:'Trader',hd:'@fx_trader',tx:'Reservas netas en rojo. El BCRA est\u00e1 vendiendo lo que no tiene.',lk:8901}],
+  pop_baja:  [{av:'\uD83D\uDCE3',nm:'Oposici\u00f3n',hd:'@oposicion_ar',tx:'El BCRA ha demostrado su incapacidad. Pedimos la renuncia.',lk:18902}],
+  desemp_alt:[{av:'\uD83D\uDC77',nm:'Trabajador',hd:'@laburant',tx:'Cerraron la f\u00e1brica. 15 a\u00f1os de antig\u00FCedad. El ajuste no lo pagamos los que lo decidieron.',lk:45231}],
+  buena:     [{av:'\uD83D\uDCC8',nm:'Analista',hd:'@bull_arg',tx:'Sorprendente: la gesti\u00f3n del BCRA est\u00e1 dando resultados. Inflaci\u00f3n cediendo.',lk:3421}],
+};
+
+var QTRS = ['ENE','ABR','JUL','OCT'];
+
+// ═══ STATE ═══════════════════════════════════════════════════════════════════
+
 var G = {};
 var infHist=[], resHist=[], desHist=[];
-var QTRS = ['ENE','ABR','JUL','OCT'];
-var esterMode = 'no'; // 'letras', 'bonos', 'no'
-var pendingComunicado = null; // { comunicado, turnoEmitido }
+var esterMode = 'no';
+var pendingCom = null;
+var comOpts = [];
+var selectedCom = null;
+var playerName = '';
+var playerTipo = null;
+var selectedTipo = null;
+
+// ═══ START ═══════════════════════════════════════════════════════════════════
 
 function startGame() {
+  var nameEl = document.getElementById('ob-nombre');
+  playerName = nameEl ? (nameEl.value.trim() || 'Presidente') : 'Presidente';
+  playerTipo = selectedTipo || TIPOS.moderado;
+  var t = playerTipo;
+
   G = {
     turn:0, year:2024,
-    inf:8.5, res:10.0, dolar:1050, brecha:45,
-    tasa:70, tasa_anterior:70,
-    cepo:7, cepo_anterior:7,
+    inf: 8.5 + (t.inf_mod||0), res: 10.0 + (t.res_mod||0),
+    dolar:1050, brecha:45,
+    tasa:t.tasa, tasa_ant:t.tasa,
+    cepo:t.cepo, cepo_ant:t.cepo,
     pop:55, tension:28, desemp:8.5,
-    credibilidad:70, // 0-100
+    cred:70, riesgo:850,
+    deuda:[], deuda_default:false,
     history:[], curEvent:null,
-    decisions:{tasa:70,crawl:2,emision:3,cepo:7,interv:0},
-    fiscalLast:-99, lost:false,
+    decisions:{ tasa:t.tasa, crawl:t.crawl, emision:t.emision, cepo:t.cepo, interv:0 },
+    fiscalLast:-99,
   };
-  infHist=[8.5]; resHist=[10.0]; desHist=[8.5];
-  esterMode='no';
-  pendingComunicado=null;
+
+  infHist=[G.inf]; resHist=[G.res]; desHist=[8.5];
+  esterMode='no'; pendingCom=null; selectedCom=null;
+
   buildSliders();
   document.getElementById('sl-interv').value=0;
   document.getElementById('slv-interv').textContent='0B USD';
-  updateEsterUI();
-  updateMesaPreview(0);
-  loadEvent();
+  setEster('no');
+  updateMesa(0);
+  renderDeuda();
+  loadInauguration();
   renderAll();
-  showScreen('screen-game');
+  showScreen('s-game');
 }
 
-// ── SLIDERS BUILD ─────────────────────────────────────────────────────────────
+// ═══ INAUGURACION ════════════════════════════════════════════════════════════
+
+function loadInauguration() {
+  var tipoKey = 'moderado';
+  for (var k in TIPOS) { if (TIPOS[k] === playerTipo) { tipoKey = k; break; } }
+  var tits = {
+    expansivo:    playerName+' asume el BCRA con agenda de crecimiento: "El empleo es la prioridad"',
+    moderado:     playerName+' asume la presidencia del BCRA: "Buscaremos equilibrio entre crecimiento y estabilidad"',
+    conservador:  playerName+' al frente del BCRA: "La inflaci\u00f3n cero es el \u00fanico camino sostenible"',
+    clasico:      playerName+' asume el BCRA: "Las reglas por encima de la discrecionalidad"',
+  };
+  var ledes = {
+    expansivo:    'El nuevo presidente del BCRA prometi\u00f3 pol\u00edticas de est\u00edmulo al consumo y la producci\u00f3n. El mercado reaccion\u00f3 con escepticismo.',
+    moderado:     'En su discurso de asunci\u00f3n, ' + playerName + ' convoc\u00f3 al di\u00e1logo con todos los sectores. "No hay recetas m\u00e1gicas", advirti\u00f3.',
+    conservador:  'Con tono austero, el nuevo titular del BCRA prometi\u00f3 "llevar la inflaci\u00f3n al d\u00edgito" en dos a\u00f1os. "Va a doler, pero no hay atajos".',
+    clasico:      'En una ceremonia sobria, el nuevo presidente del BCRA anunci\u00f3 que el organismo dejar\u00e1 de financiar al Tesoro.',
+  };
+  document.getElementById('np-tag').textContent = 'NUEVO GOBIERNO';
+  document.getElementById('np-hl').textContent  = tits[tipoKey];
+  document.getElementById('np-lede').textContent = ledes[tipoKey];
+  document.getElementById('np-edu').innerHTML = 'El perfil del nuevo presidente: <b>'+playerTipo.label+'</b>. Arranca con tasa '+playerTipo.tasa+'% TNA, emisi\u00f3n '+playerTipo.emision+'%/mes.';
+  document.getElementById('np-date').innerHTML = 'BUENOS AIRES<br>ENE 2024';
+  renderTweets([
+    {av:'\uD83D\uDCFA',nm:'Infobae',hd:'@infobae',tx:playerName+' asumi\u00f3 como presidente del BCRA. Perfil '+playerTipo.label+'. Los mercados esperan se\u00f1ales claras.',lk:12043},
+    {av:'\uD83C\uDF0D',nm:'Reuters',hd:'@reuters_arg',tx:'New BCRA president '+playerName+' takes office. Inflation at '+G.inf.toFixed(1)+'% monthly.',lk:3421},
+    {av:'\uD83D\uDE05',nm:'Eco S\u00e1tira',hd:'@eco_satiro',tx:'Nuevo presidente del BCRA. Todos los anteriores tambi\u00e9n iban a solucionar la inflaci\u00f3n. Compro d\u00f3lares por las dudas.',lk:45231},
+  ]);
+}
+
+// ═══ SLIDERS ═════════════════════════════════════════════════════════════════
+
 function buildSliders() {
   var c = document.getElementById('sliders');
   c.innerHTML = '';
   for (var i=0; i<SLIDERS.length; i++) {
     var d = SLIDERS[i];
+    var t = playerTipo || TIPOS.moderado;
+    var val = t[d.id] !== undefined ? t[d.id] : d.min;
     var div = document.createElement('div');
     div.className = 'sl';
     div.innerHTML =
-      '<div class="sl-top">' +
-        '<span class="sl-nm">' + d.label +
-          '<span class="tt"><span class="tt-i">?</span><span class="tt-b">' + d.tt + '</span></span>' +
-        '</span>' +
-        '<span class="sl-vl" id="slv-'+d.id+'">'+d.init+d.unit+'</span>' +
-      '</div>' +
-      '<div class="sl-ht">'+d.hint+'</div>' +
-      '<input type="range" id="sl-'+d.id+'" min="'+d.min+'" max="'+d.max+'" step="'+d.step+'" value="'+d.init+'">';
+      '<div class="sl-top"><span class="sl-nm">'+d.label+
+        '<span class="tt"><span class="tt-i">?</span><span class="tt-b">'+d.tt+'</span></span>'+
+      '</span><span class="sl-vl" id="slv-'+d.id+'">'+val+d.unit+'</span></div>'+
+      '<div class="sl-ht">'+d.hint+'</div>'+
+      '<input type="range" id="sl-'+d.id+'" min="'+d.min+'" max="'+d.max+'" step="'+d.step+'" value="'+val+'">';
     c.appendChild(div);
-    (function(sid, sunit){
-      document.getElementById('sl-'+sid).addEventListener('input', function(){
-        document.getElementById('slv-'+sid).textContent = this.value + sunit;
-        G.decisions[sid] = parseFloat(this.value);
-        if (sid === 'interv') { updateMesaPreview(parseFloat(this.value)); updateEsterUI(); }
+    G.decisions[d.id] = val;
+    (function(id, unit){
+      document.getElementById('sl-'+id).addEventListener('input', function(){
+        G.decisions[id] = parseFloat(this.value);
+        document.getElementById('slv-'+id).textContent = this.value+unit;
+        if (id==='interv') { updateMesa(parseFloat(this.value)); updateEsterUI(); }
       });
     })(d.id, d.unit);
   }
 }
 
-// ── ESTERILIZACION ────────────────────────────────────────────────────────────
+// ═══ ESTERILIZACION ══════════════════════════════════════════════════════════
+
 function setEster(mode) {
   esterMode = mode;
-  document.getElementById('ester-letras').className = 'btn-ester' + (mode==='letras'?' active-letras':'');
-  document.getElementById('ester-bonos').className  = 'btn-ester' + (mode==='bonos'?' active-bonos':'');
-  document.getElementById('ester-no').className     = 'btn-ester' + (mode==='no'?' active-no':'');
-  updateMesaPreview(G.decisions.interv || 0);
+  document.getElementById('btn-esl').className = 'btn-ester' + (mode==='letras'?' al':'');
+  document.getElementById('btn-esb').className = 'btn-ester' + (mode==='bonos'?' ab':'');
+  document.getElementById('btn-esn').className = 'btn-ester' + (mode==='no'?' an':'');
+  updateMesa(G.decisions.interv||0);
 }
 
 function updateEsterUI() {
-  var interv = G.decisions.interv || 0;
+  var v = G.decisions.interv||0;
   var hint = document.getElementById('ester-hint');
-  if (interv >= 0) {
-    hint.textContent = 'Sin compra activa \u2014 sin esterilizaci\u00f3n necesaria';
-    document.getElementById('ester-letras').disabled = true;
-    document.getElementById('ester-bonos').disabled = true;
-  } else {
-    hint.textContent = 'Elegir c\u00f3mo esterilizar los pesos emitidos por compra de reservas';
-    document.getElementById('ester-letras').disabled = false;
-    document.getElementById('ester-bonos').disabled = false;
-  }
+  var esl = document.getElementById('btn-esl'), esb = document.getElementById('btn-esb');
+  if (v >= 0) { hint.textContent='Sin compra activa'; esl.disabled=true; esb.disabled=true; }
+  else        { hint.textContent='Elegir c\u00f3mo esterilizar la emisi\u00f3n'; esl.disabled=false; esb.disabled=false; }
 }
 
-// ── MESA DE CAMBIOS ───────────────────────────────────────────────────────────
-function updateMesaPreview(v) {
-  var opEl = document.getElementById('mesa-op');
-  var hintEl = document.getElementById('mesa-hint');
-  var r1 = document.getElementById('mef-res');
-  var r2 = document.getElementById('mef-brecha');
-  var r3 = document.getElementById('mef-inf');
-  var r4 = document.getElementById('mef-ester');
+// ═══ MESA DE CAMBIOS ══════════════════════════════════════════════════════════
 
-  function ef(el, txt, cls){ el.textContent=txt; el.className='mesa-ef '+cls; }
-
-  if (v === 0) {
+function updateMesa(v) {
+  var opEl=document.getElementById('mk-op'), hintEl=document.getElementById('mesa-hint');
+  function ef(id,txt,cls){ var el=document.getElementById(id); el.textContent=txt; el.className='mef '+cls; }
+  if (v===0) {
     opEl.textContent='Neutral'; opEl.style.color='var(--perg)';
     hintEl.textContent='Sin operaci\u00f3n activa este trimestre';
-    ef(r1,'','neu'); ef(r2,'','neu'); ef(r3,'','neu'); ef(r4,'','neu');
-  } else if (v > 0) {
+    ef('mef-res','','neu'); ef('mef-brecha','','neu'); ef('mef-inf','','neu'); ef('mef-ester','','neu');
+  } else if (v>0) {
     opEl.textContent='VENTA USD '+v+'B'; opEl.style.color='#eb5757';
-    hintEl.textContent='Vend\u00e9s d\u00f3lares para planchar el tipo de cambio y la brecha';
-    ef(r1,'Reservas \u2193 '+v+'B USD','neg');
-    ef(r2,'Brecha \u2193 ~'+Math.round(v*8)+'%','pos');
-    ef(r3,'Presi\u00f3n inflacionaria \u2193','pos');
-    ef(r4,'Sin esterilizaci\u00f3n necesaria','neu');
+    hintEl.textContent='Vend\u00e9s d\u00f3lares para planchar el tipo de cambio';
+    ef('mef-res','Reservas \u2193 '+v+'B USD','neg');
+    ef('mef-brecha','Brecha \u2193 ~'+Math.round(v*8)+'%','pos');
+    ef('mef-inf','Presi\u00f3n inflacionaria \u2193','pos');
+    ef('mef-ester','Sin esterilizaci\u00f3n necesaria','neu');
   } else {
-    var abs = Math.abs(v);
+    var abs=Math.abs(v);
     opEl.textContent='COMPRA USD '+abs+'B'; opEl.style.color='#6fcf97';
     hintEl.textContent='Compr\u00e1s d\u00f3lares: acumul\u00e1s reservas a costo de emitir pesos';
-    ef(r1,'Reservas \u2191 '+abs+'B USD','pos');
-    ef(r2,'Brecha \u2191 ~'+Math.round(abs*5)+'% (m\u00e1s pesos)','neg');
-    var infExtra = esterMode==='no' ? abs*0.4 : esterMode==='letras' ? abs*0.15 : abs*0.08;
-    ef(r3,'Inflaci\u00f3n extra +'+infExtra.toFixed(1)+'pp (emisi\u00f3n)','neg');
-    if (esterMode==='no') ef(r4,'Sin esterilizaci\u00f3n: plena emisi\u00f3n inflacionaria','neg');
-    else if (esterMode==='letras') ef(r4,'Letras corto plazo: absorbe 60% de emisi\u00f3n','pos');
-    else ef(r4,'Bonos largo plazo: absorbe 80% emisi\u00f3n, costo financiero','pos');
+    ef('mef-res','Reservas \u2191 '+abs+'B USD','pos');
+    ef('mef-brecha','Brecha \u2191 ~'+Math.round(abs*5)+'% (m\u00e1s pesos)','neg');
+    var xtra = esterMode==='no'?abs*0.4:esterMode==='letras'?abs*0.15:abs*0.08;
+    ef('mef-inf','Inflaci\u00f3n extra +'+xtra.toFixed(1)+'pp','neg');
+    if (esterMode==='no') ef('mef-ester','Sin esterilizaci\u00f3n: emisi\u00f3n plena','neg');
+    else if (esterMode==='letras') ef('mef-ester','Letras: absorbe 60% emisi\u00f3n','pos');
+    else ef('mef-ester','Bonos: absorbe 80% emisi\u00f3n','pos');
   }
+  var mkBr=document.getElementById('mk-brecha');
+  if(mkBr){ mkBr.textContent=Math.round(G.brecha)+'%'; mkBr.style.color=G.brecha>80?'#eb5757':G.brecha>40?'#f2994a':'#6fcf97'; }
 }
 
 function updateMesaKPIs() {
-  document.getElementById('mesa-res').textContent = 'USD '+G.res.toFixed(1)+'B';
-  var bEl = document.getElementById('mesa-brecha');
-  bEl.textContent = Math.round(G.brecha)+'%';
-  bEl.style.color = G.brecha>80?'#eb5757':G.brecha>40?'#f2994a':'#6fcf97';
-  var op = G.decisions.interv || 0;
-  var opEl = document.getElementById('mesa-op');
-  if (op===0){ opEl.textContent='Neutral'; opEl.style.color='var(--perg)'; }
-  else if (op>0){ opEl.textContent='VENTA '+op+'B'; opEl.style.color='#eb5757'; }
-  else { opEl.textContent='COMPRA '+Math.abs(op)+'B'; opEl.style.color='#6fcf97'; }
+  document.getElementById('mk-res').textContent='USD '+G.res.toFixed(1)+'B';
+  var br=document.getElementById('mk-brecha'); br.textContent=Math.round(G.brecha)+'%'; br.style.color=G.brecha>80?'#eb5757':G.brecha>40?'#f2994a':'#6fcf97';
+  var op=G.decisions.interv||0, opEl=document.getElementById('mk-op');
+  if(op===0){opEl.textContent='Neutral';opEl.style.color='var(--perg)';}
+  else if(op>0){opEl.textContent='VENTA '+op+'B';opEl.style.color='#eb5757';}
+  else{opEl.textContent='COMPRA '+Math.abs(op)+'B';opEl.style.color='#6fcf97';}
 }
 
-// ── COMUNICADO ────────────────────────────────────────────────────────────────
-var selectedComunicado = null;
-var comunicadoOpts = [];
+// ═══ COMUNICADOS ═════════════════════════════════════════════════════════════
 
-function showComunicadoModal() {
-  var pool = COMUNICADOS.slice();
-  pool.sort(function(){ return Math.random()-0.5; });
-  comunicadoOpts = pool.slice(0,3);
-  selectedComunicado = null;
-
+function showComModal() {
+  var pool = COMUNICADOS.slice().sort(function(){ return Math.random()-0.5; });
+  comOpts = pool.slice(0,3);
+  selectedCom = null;
   var container = document.getElementById('com-opts');
-  container.innerHTML = '';
-
-  for (var i=0; i<comunicadoOpts.length; i++) {
+  container.innerHTML='';
+  for (var i=0; i<comOpts.length; i++) {
     var btn = document.createElement('button');
-    btn.className = 'btn-com';
-    btn.setAttribute('data-idx', i);
-    btn.innerHTML = comunicadoOpts[i].texto +
-      '<small>Si cumple: mejora credibilidad. Si no cumple: p\u00e9rdida de confianza severa.</small>';
+    btn.type='button'; btn.className='btn-com';
+    btn.innerHTML = comOpts[i].texto+'<small>Si cumple: +credibilidad. Si no cumple: crisis de expectativas.</small>';
     container.appendChild(btn);
-    (function(b, idx) {
-      b.addEventListener('click', function(e) {
-        var all = document.querySelectorAll('.btn-com');
-        for (var j=0; j<all.length; j++) all[j].classList.remove('selected');
-        b.classList.add('selected');
-        selectedComunicado = comunicadoOpts[idx];
-      });
-    })(btn, i);
+    (function(b,idx){ b.addEventListener('click',function(){
+      var all=document.querySelectorAll('.btn-com');
+      for(var j=0;j<all.length;j++) all[j].classList.remove('sel');
+      b.classList.add('sel');
+      selectedCom = comOpts[idx];
+    }); })(btn,i);
   }
-  document.getElementById('com-overlay').classList.add('open');
+  document.getElementById('com-ov').classList.add('open');
 }
 
-function emitirComunicado() {
-  if (!selectedComunicado) { showAlert('Seleccione una opci\u00f3n primero', '#D4841A'); return; }
-  pendingComunicado = { com: selectedComunicado, turno: G.turn };
-  var twEl = document.createElement('div');
-  twEl.className = 'tw comunicado';
-  twEl.innerHTML = '<div class="tw-hdr"><div class="tw-av">\uD83C\uDFDB</div><div><div class="tw-nm">BCRA Oficial</div><div class="tw-hd">@bcra_oficial \u00b7 COMUNICADO</div></div></div>' +
-    '<div class="tw-bd">' + selectedComunicado.texto + '</div>' +
-    '<div class="tw-lk">\u2665 12.043</div>';
-  var tweetsEl = document.getElementById('tweets');
-  tweetsEl.insertBefore(twEl, tweetsEl.firstChild);
-  document.getElementById('com-overlay').classList.remove('open');
-  selectedComunicado = null;
-  showAlert('Comunicado emitido. El mercado est\u00e1 observando.', '#C8A040');
+function emitirCom() {
+  if (!selectedCom) { showAlert('Seleccione una opci\u00f3n primero','#D4841A'); return; }
+  pendingCom = { com:selectedCom, turn:G.turn };
+  addTweet('\uD83C\uDFDB','BCRA Oficial','@bcra_oficial','COMUNICADO: '+selectedCom.texto,'12.043',true);
+  document.getElementById('com-ov').classList.remove('open');
+  selectedCom=null;
+  showAlert('Comunicado emitido. El mercado est\u00e1 observando.','#C8A040');
 }
 
-function skipComunicado() {
-  document.getElementById('com-overlay').classList.remove('open');
-  selectedComunicado = null;
+function skipCom() {
+  document.getElementById('com-ov').classList.remove('open');
+  selectedCom=null;
 }
 
-function checkComunicado() {
-  if (!pendingComunicado) return;
-  var com = pendingComunicado.com;
-  var cumple = com.condicion(G);
-  var ef = cumple ? com.efecto_ok : com.efecto_fail;
-  var tweet = cumple ? com.tweet_ok : com.tweet_fail;
-
-  if (ef.inf)     G.inf     = Math.max(1.2, G.inf + ef.inf);
-  if (ef.pop)     G.pop     = Math.max(0, Math.min(100, G.pop + ef.pop));
-  if (ef.tension) G.tension = Math.max(0, Math.min(100, G.tension + ef.tension));
-  if (ef.brecha)  G.brecha  = Math.max(3, Math.min(200, G.brecha + ef.brecha));
-  if (ef.res)     G.res     = Math.max(-10, G.res + ef.res);
-
-  if (cumple) G.credibilidad = Math.min(100, G.credibilidad + 8);
-  else        G.credibilidad = Math.max(0, G.credibilidad - 20);
-
-  var twEl = document.createElement('div');
-  twEl.className = 'tw comunicado';
-  twEl.innerHTML = '<div class="tw-hdr"><div class="tw-av">'+(cumple?'\uD83D\uDCC8':'\uD83D\uDD25')+'</div><div><div class="tw-nm">Mercado Reacciona</div><div class="tw-hd">@mercado_arg</div></div></div>' +
-    '<div class="tw-bd">'+tweet+'</div>' +
-    '<div class="tw-lk">\u2665 '+(cumple?'24.031':'89.234')+'</div>';
-  var tweetsEl = document.getElementById('tweets');
-  tweetsEl.insertBefore(twEl, tweetsEl.firstChild);
-
-  if (!cumple) showAlert('Incumplimiento del comunicado: credibilidad -20pts', '#C0392B');
-  pendingComunicado = null;
+function checkCom() {
+  if (!pendingCom) return;
+  var com = pendingCom.com;
+  var cumple = com.cond(G);
+  var ef = cumple ? com.ok : com.fail;
+  applyEf(ef);
+  if (cumple) G.cred = Math.min(100, G.cred+8);
+  else        G.cred = Math.max(0, G.cred-20);
+  addTweet(cumple?'\uD83D\uDCC8':'\uD83D\uDD25','Mercado Reacciona','@mercado_arg', cumple?com.tw_ok:com.tw_fail, cumple?'24.031':'89.234',true);
+  if (!cumple) showAlert('Incumplimiento: credibilidad -20pts','#C0392B');
+  pendingCom=null;
 }
 
-// ── EVENTS ────────────────────────────────────────────────────────────────────
+function applyEf(ef) {
+  if(ef.inf)     G.inf     = Math.max(1.2,G.inf+ef.inf);
+  if(ef.pop)     G.pop     = Math.max(0,Math.min(100,G.pop+ef.pop));
+  if(ef.tension) G.tension = Math.max(0,Math.min(100,G.tension+ef.tension));
+  if(ef.brecha)  G.brecha  = Math.max(3,Math.min(200,G.brecha+ef.brecha));
+  if(ef.res)     G.res     = Math.max(-10,G.res+ef.res);
+  if(ef.desemp)  G.desemp  = Math.max(3,Math.min(40,G.desemp+ef.desemp));
+  if(ef.emision) G.decisions.emision = Math.max(0,Math.min(20,G.decisions.emision+ef.emision));
+}
+
+// ═══ DEUDA EXTERNA ════════════════════════════════════════════════════════════
+
+function tomarDeuda() {
+  if (G.deuda.filter(function(d){return d.pagado<d.monto;}).length >= 2) return;
+  var monto=2, tasa=Math.round((6+G.riesgo/10000)*10)/10;
+  var cuota=Math.round(monto/8*10)/10, vence=G.turn+8;
+  G.deuda.push({monto:monto,tasa:tasa,cuota:cuota,vence:vence,pagado:0});
+  G.res = Math.max(-10,G.res+monto);
+  G.brecha = Math.min(200,G.brecha+5);
+  G.riesgo = Math.min(4500,G.riesgo+100);
+  renderDeuda(); renderAll();
+  showAlert('Deuda tomada: USD '+monto+'B al '+tasa+'% anual. Vence T'+(vence+1),'#C8A040');
+}
+
+function pagarCuota() {
+  var act=G.deuda.filter(function(d){return d.pagado<d.monto;});
+  if(!act.length) return;
+  var d=act[0];
+  if(G.res < d.cuota){ showAlert('Reservas insuficientes. \u00a1DEFAULT!','#C0392B'); triggerDefault(); return; }
+  G.res-=d.cuota; d.pagado=Math.round((d.pagado+d.cuota)*10)/10;
+  G.cred=Math.min(100,G.cred+3); G.riesgo=Math.max(200,G.riesgo-80);
+  renderDeuda(); renderAll();
+  showAlert('Cuota pagada: USD '+d.cuota+'B. Credibilidad mejora.','#1E7840');
+}
+
+function checkDeuda() {
+  if(!G.deuda) return;
+  G.deuda.filter(function(d){return d.pagado<d.monto;}).forEach(function(d){
+    var turnoTomado=d.vence-8, cuotasEsp=Math.max(0,G.turn-turnoTomado), cuotasPag=Math.round(d.pagado/d.cuota);
+    if(cuotasEsp>cuotasPag+1){ G.riesgo=Math.min(4500,G.riesgo+300); G.cred=Math.max(0,G.cred-15); G.tension=Math.min(100,G.tension+10); showAlert('MORA: Vencimiento impago. Riesgo pa\u00eds escala.','#C0392B'); }
+    if(G.turn>=d.vence && d.pagado<d.monto*0.9) triggerDefault();
+  });
+}
+
+function triggerDefault() {
+  if(G.deuda_default) return;
+  G.deuda_default=true; G.riesgo=4500; G.cred=Math.max(0,G.cred-40); G.tension=Math.min(100,G.tension+30); G.brecha=Math.min(200,G.brecha+50);
+  showAlert('\u00a1DEFAULT SOBERANO! Riesgo pa\u00eds 4500bps. Crisis total.','#C0392B');
+}
+
+function renderDeuda() {
+  if(!G.deuda) return;
+  var stock=G.deuda.reduce(function(a,d){return a+(d.monto-d.pagado);},0); stock=Math.round(stock*10)/10;
+  var act=G.deuda.filter(function(d){return d.pagado<d.monto;});
+  var skEl=document.getElementById('dk-stock'); if(skEl){skEl.textContent='USD '+stock+'B';skEl.style.color=stock>6?'#eb5757':stock>2?'#f2994a':'var(--perg)';}
+  if(act.length){
+    var d=act[0], rest=d.vence-G.turn;
+    var pxEl=document.getElementById('dk-prox'); if(pxEl){pxEl.textContent='T'+(d.vence+1);pxEl.style.color=rest<=2?'#eb5757':rest<=4?'#f2994a':'var(--perg)';}
+    var cuEl=document.getElementById('dk-cuota'); if(cuEl) cuEl.textContent='USD '+d.cuota+'B';
+    var taEl=document.getElementById('dk-tasa'); if(taEl) taEl.textContent=d.tasa+'%';
+    var inEl=document.getElementById('dk-info');
+    if(inEl){inEl.textContent=rest<=2?'\u26a0 Vence en '+rest+' trim. Reservas necesarias: USD '+d.cuota+'B':'Vence en '+rest+' trimestres \u00b7 Pagado: USD '+d.pagado+'/'+d.monto+'B';inEl.className='deuda-info'+(rest<=2?' alert':'');}
+    var pBtn=document.getElementById('btn-d-pagar'); if(pBtn) pBtn.disabled=false;
+  } else {
+    var px2=document.getElementById('dk-prox'); if(px2){px2.textContent='Sin venc.';px2.style.color='';}
+    var cu2=document.getElementById('dk-cuota'); if(cu2) cu2.textContent='USD 0B';
+    var ta2=document.getElementById('dk-tasa'); if(ta2) ta2.textContent='--';
+    var in2=document.getElementById('dk-info'); if(in2){in2.textContent='Sin deuda activa. Pod\u00e9s tomar a 8 trimestres.';in2.className='deuda-info';}
+    var pb2=document.getElementById('btn-d-pagar'); if(pb2) pb2.disabled=true;
+  }
+  var tb=document.getElementById('btn-d-tomar'); if(tb) tb.disabled=act.length>=2;
+}
+
+// ═══ EVENTS ══════════════════════════════════════════════════════════════════
+
 function loadEvent() {
-  var pool = EVENTS.filter(function(e){ return e!==G.curEvent; });
-  G.curEvent = pool[Math.floor(Math.random()*pool.length)];
-  var ev = G.curEvent;
-  var q = QTRS[G.turn%4];
-  var yr = G.year + Math.floor(G.turn/4);
-  document.getElementById('np-tag').textContent = ev.tag;
-  document.getElementById('np-hl').textContent = ev.hl;
-  document.getElementById('np-lede').textContent = ev.lede;
-  document.getElementById('np-edu').innerHTML = ev.edu;
-  document.getElementById('np-date').innerHTML = 'BUENOS AIRES<br>'+q+' '+yr;
-  renderTweets(ev.tweets);
+  var pool=EVENTS.filter(function(e){return e!==G.curEvent;});
+  G.curEvent=pool[Math.floor(Math.random()*pool.length)];
 }
 
-// ── FISCAL ────────────────────────────────────────────────────────────────────
-function pedirReforma(tipo) {
-  if (G.turn - G.fiscalLast < 2) {
-    showAlert('Disponible en '+(2-(G.turn-G.fiscalLast))+' trimestre(s)', '#D4841A'); return;
-  }
-  var opts = FISCAL[tipo];
-  var pop_ok = G.pop >= opts[0].pop_min;
-  var res = (Math.random() < opts[0].prob && pop_ok) ? opts[0] : opts[1];
-  var dt = res.delta;
-  if (dt.tension) G.tension = Math.max(0,Math.min(100,G.tension+dt.tension));
-  if (dt.pop)     G.pop     = Math.max(0,Math.min(100,G.pop+dt.pop));
-  if (dt.desemp)  G.desemp  = Math.max(0,Math.min(40,G.desemp+dt.desemp));
-  if (dt.emision) {
-    var ne = Math.max(0,Math.min(20,G.decisions.emision+dt.emision));
-    G.decisions.emision=ne;
-    document.getElementById('sl-emision').value=ne;
-    document.getElementById('slv-emision').textContent=ne+'%/mes';
-  }
+// ═══ RESUMEN TRIMESTRAL ══════════════════════════════════════════════════════
+
+function renderResumen(prev) {
+  try {
+    var n=playerName||'La conducci\u00f3n';
+    var dI=G.inf-(prev.inf||G.inf), dR=G.res-(prev.res||G.res), dP=G.pop-(prev.pop||G.pop);
+    var dB=G.brecha-(prev.brecha||G.brecha), dD=G.desemp-(prev.desemp||G.desemp);
+    var hechos=[];
+    if(dI>1.5) hechos.push('la inflaci\u00f3n escal\u00f3 a '+G.inf.toFixed(1)+'%');
+    else if(dI<-1) hechos.push('la inflaci\u00f3n cedi\u00f3 a '+G.inf.toFixed(1)+'%');
+    else hechos.push('la inflaci\u00f3n se mantuvo en '+G.inf.toFixed(1)+'%');
+    if(dR>1) hechos.push('las reservas subieron a USD '+G.res.toFixed(1)+'B');
+    else if(dR<-1) hechos.push('las reservas cayeron a USD '+G.res.toFixed(1)+'B');
+    else hechos.push('las reservas se mantuvieron en USD '+G.res.toFixed(1)+'B');
+    if(dB>10) hechos.push('la brecha se ampli\u00f3 al '+Math.round(G.brecha)+'%');
+    else if(dB<-10) hechos.push('la brecha comprimi\u00f3 al '+Math.round(G.brecha)+'%');
+    if(dD>0.5) hechos.push('el desempleo subi\u00f3 a '+G.desemp.toFixed(1)+'%');
+    else if(dD<-0.5) hechos.push('el desempleo baj\u00f3 a '+G.desemp.toFixed(1)+'%');
+    var tit='';
+    if(G.inf>20) tit='La inflaci\u00f3n se acelera sin freno: el BCRA pierde el ancla';
+    else if(dI<-2&&dR>0) tit=n+' acumula reservas y baja la inflaci\u00f3n: \u00bfcambio de tendencia?';
+    else if(dR<-2) tit='Sangr\u00eda de reservas: el BCRA vende d\u00f3lares para sostener el tipo de cambio';
+    else if(dP<-8) tit='Cae la imagen del BCRA: la oposici\u00f3n pide la renuncia de '+n;
+    else if(G.cred>80) tit=n+' gana credibilidad: el mercado empieza a creerle al BCRA';
+    else tit='Balance trimestral: '+hechos[0]+' mientras el Gobierno negocia';
+    var lede='En el trimestre, '+hechos.slice(0,3).join(', ')+'. ';
+    if(G.tension>70) lede+='La tensi\u00f3n sist\u00e9mica permanece en niveles cr\u00edticos.';
+    else if(G.pop>55) lede+='La imagen de la gesti\u00f3n se sostiene por encima del 50%.';
+    else lede+='El panorama sigue siendo desafiante.';
+    var ev=G.curEvent;
+    document.getElementById('np-tag').textContent='RESUMEN T'+(G.turn%4+1);
+    document.getElementById('np-hl').textContent=tit;
+    document.getElementById('np-lede').textContent=lede;
+    document.getElementById('np-edu').innerHTML=(ev?ev.edu:'')+'<br><small style="color:#777">'+n+' ('+(playerTipo||TIPOS.moderado).label+')</small>';
+    var q=QTRS[(G.turn-1)%4], yr=G.year+Math.floor((G.turn-1)/4);
+    document.getElementById('np-date').innerHTML='BUENOS AIRES<br>'+q+' '+yr;
+    if(ev) renderTweets(ev.tw);
+  } catch(e){}
+}
+
+// ═══ FISCAL ══════════════════════════════════════════════════════════════════
+
+function pedirFiscal(tipo) {
+  if (G.turn - G.fiscalLast < 2) { showAlert('Disponible en '+(2-(G.turn-G.fiscalLast))+' trimestre(s)','#D4841A'); return; }
+  var opts=FISCAL[tipo], pop_ok=G.pop>=opts[0].pop_min;
+  var r=(Math.random()<opts[0].p&&pop_ok)?opts[0]:opts[1];
+  applyEf(r.dt);
+  if(r.dt.emision){ var ne=G.decisions.emision; var sl=document.getElementById('sl-emision'); if(sl){sl.value=ne;document.getElementById('slv-emision').textContent=ne+'%/mes';} }
   G.fiscalLast=G.turn;
   document.getElementById('btn-aj').disabled=true;
   document.getElementById('btn-ex').disabled=true;
-  document.getElementById('m-icon').textContent=res.icon;
-  document.getElementById('m-title').textContent=res.title;
-  document.getElementById('m-body').textContent=res.body;
-  document.getElementById('m-eff').textContent=res.eff;
+  document.getElementById('m-icon').textContent=r.icon;
+  document.getElementById('m-title').textContent=r.title;
+  document.getElementById('m-body').textContent=r.body;
+  document.getElementById('m-eff').textContent=r.eff;
   document.getElementById('modal').classList.add('open');
 }
 
-// ── PROCESS TURN ──────────────────────────────────────────────────────────────
+// ═══ ELECCIONES ══════════════════════════════════════════════════════════════
+
+function runEleccion(tipo) {
+  var shares=PARTIDOS.map(function(p){
+    var b=25;
+    if(p.id==='expansivo'&&G.desemp>12) b+=15;
+    if(p.id==='conservador'&&G.inf>15) b+=15;
+    if(p.id==='populista'&&G.pop<30) b+=10;
+    b+=Math.random()*20-5;
+    return {p:p,pct:b};
+  });
+  var tot=shares.reduce(function(a,b){return a+b.pct;},0);
+  shares.forEach(function(s){s.pct=Math.round(s.pct/tot*100);});
+  shares.sort(function(a,b){return b.pct-a.pct;});
+  var gan=shares[0].p, accion=tipo==='presidencial'?gan.pres:gan.leg;
+  applyEf(accion.ef);
+  document.getElementById('elec-tp').textContent=tipo==='presidencial'?'ELECCIONES PRESIDENCIALES':'ELECCIONES LEGISLATIVAS';
+  document.getElementById('elec-ttl').textContent=tipo==='presidencial'?'Argentina elige presidente':'Argentina renueva el Congreso';
+  document.getElementById('elec-sub').textContent=tipo==='presidencial'?'Los resultados definir\u00e1n su margen pol\u00edtico por los pr\u00f3ximos 4 a\u00f1os':'La composici\u00f3n del Congreso afectar\u00e1 su capacidad de reformas';
+  var html='';
+  shares.forEach(function(s,i){
+    html+='<div class="partido"><div class="part-hdr"><span class="part-nm" style="color:'+s.p.color+'">'+s.p.nombre+(i===0?' \uD83C\uDFC6':'')+'</span><span class="part-pct" style="color:'+s.p.color+'">'+s.pct+'%</span></div>'+
+      '<div class="part-bar"><div class="part-bar-fill" style="width:'+Math.round(s.pct*.8)+'%;background:'+s.p.color+'"></div></div>'+
+      '<div class="part-ide">'+s.p.ide+'</div></div>';
+  });
+  document.getElementById('elec-partidos').innerHTML=html;
+  var efTxts=[];
+  for(var k in accion.ef){ var v=accion.ef[k]; efTxts.push(k.charAt(0).toUpperCase()+k.slice(1)+' '+(v>0?'+':'')+v); }
+  document.getElementById('elec-res-ttl').textContent='Gana: '+gan.nombre;
+  document.getElementById('elec-res-body').textContent=accion.txt;
+  document.getElementById('elec-res-eff').textContent=efTxts.join(' \u00b7 ');
+  document.getElementById('elec-ov').classList.add('open');
+}
+
+// ═══ PROCESS TURN ════════════════════════════════════════════════════════════
+
 document.getElementById('btn-confirm').addEventListener('click', function(){
   this.disabled=true;
-  var d = G.decisions;
-  var ev = G.curEvent;
-  var prev = { inf:G.inf, res:G.res, pop:G.pop, tension:G.tension, brecha:G.brecha, desemp:G.desemp };
-  var ef = ev.efecto;
+  try {
+    var d=G.decisions, ev=G.curEvent||EVENTS[0];
+    var prev={inf:G.inf,res:G.res,pop:G.pop,tension:G.tension,brecha:G.brecha,desemp:G.desemp};
+    var ef=ev?ev.ef:{};
 
-  G.tasa_anterior = G.tasa;
-  G.cepo_anterior = G.cepo;
+    G.tasa_ant=G.tasa; G.cepo_ant=G.cepo;
+    checkCom();
 
-  // Verificar comunicado pendiente ANTES de aplicar la nueva decision
-  checkComunicado();
+    var interv=d.interv||0;
+    var ef_r=interv<0?(esterMode==='bonos'?0.2:esterMode==='letras'?0.4:1.0):0;
+    var compra_inf=interv<0?Math.abs(interv)*0.4*ef_r:0;
+    var ester_ten=interv<0&&esterMode!=='no'?Math.abs(interv)*1.5:0;
 
-  var interv = d.interv || 0;
-  // Esterilizacion: reduce el efecto inflacionario de compra de reservas
-  var ester_factor = interv<0 ? (esterMode==='bonos'?0.2 : esterMode==='letras'?0.4 : 1.0) : 0;
-  var compra_inf = interv<0 ? Math.abs(interv)*0.4*ester_factor : 0;
-  // Esterilizacion con letras/bonos aumenta tension (mercado exige rendimientos)
-  var ester_tension = interv<0 && esterMode!=='no' ? Math.abs(interv)*1.5 : 0;
+    // INFLACION
+    var dInf=(d.emision-3)*0.45 - Math.min((d.tasa-50)*0.012,3.5) + (d.crawl-2)*0.22
+           +(G.brecha>90?1.8:G.brecha>60?0.8:0) + compra_inf + (100-G.cred)*0.01;
+    if(ef.inf) dInf+=ef.inf;
+    dInf+=(Math.random()-0.5)*1.0;
+    G.inf=Math.max(1.2,G.inf+dInf);
 
-  // INFLACION
-  var dInf = (d.emision-3)*0.45
-           - Math.min((d.tasa-50)*0.012, 3.5)
-           + (d.crawl-2)*0.22
-           + (G.brecha>90?1.8:G.brecha>60?0.8:0)
-           + compra_inf;
-  // Credibilidad baja = expectativas desancladas = mas inflacion
-  dInf += (100-G.credibilidad)*0.01;
-  if (ef.inf) dInf+=ef.inf;
-  dInf += (Math.random()-0.5)*1.0;
-  G.inf = Math.max(1.2, G.inf+dInf);
+    // RESERVAS
+    var dRes=-(d.crawl<1?1.8:d.crawl<2?0.6:0)-(10-d.cepo)*0.22-(d.cepo>=9?0.5:0)-interv;
+    if(ef.res) dRes+=ef.res;
+    dRes+=(Math.random()-0.5)*0.7;
+    G.res=Math.max(-10,G.res+dRes);
 
-  // RESERVAS
-  var dRes = -(d.crawl<1?1.8:d.crawl<2?0.6:0) - (10-d.cepo)*0.22 - (d.cepo>=9?0.5:0) - interv;
-  if (ef.res) dRes+=ef.res;
-  dRes += (Math.random()-0.5)*0.7;
-  G.res = Math.max(-10, G.res+dRes);
+    // DOLAR
+    G.dolar*=Math.pow(1+d.crawl/100,3);
 
-  // DOLAR
-  G.dolar = G.dolar * Math.pow(1+d.crawl/100,3);
+    // BRECHA
+    var dBre=(d.emision-3)*1.8+(d.cepo>=8?4:-5)-interv*4;
+    if(d.cepo<=3) dBre-=15;
+    if(interv<0&&esterMode!=='no') dBre-=Math.abs(interv)*1.5;
+    if(ef.brecha) dBre+=ef.brecha;
+    dBre+=(Math.random()-0.5)*8;
+    G.brecha=Math.max(3,Math.min(200,G.brecha+dBre));
 
-  // BRECHA
-  var dBrecha = (d.emision-3)*1.8 + (d.cepo>=8?4:-5) - interv*4;
-  if (d.cepo<=3) dBrecha-=15;
-  // Letras/bonos de esterilizacion pueden atraer capitales y bajar brecha levemente
-  if (interv<0 && esterMode!=='no') dBrecha -= Math.abs(interv)*1.5;
-  if (ef.brecha) dBrecha+=ef.brecha;
-  dBrecha += (Math.random()-0.5)*8;
-  G.brecha = Math.max(3,Math.min(200,G.brecha+dBrecha));
+    // POPULARIDAD
+    var dPop=-(G.inf-5)*0.5-(d.tasa>130?6:d.tasa>90?2:0)+(G.res>14?3:G.res<4?-6:0)+(G.brecha>100?-5:G.brecha<30?3:0)-(G.desemp>12?5:G.desemp>9?2:0);
+    if(ef.pop) dPop+=ef.pop;
+    dPop+=(Math.random()-0.5)*4;
+    G.pop=Math.max(0,Math.min(100,G.pop+dPop));
 
-  // POPULARIDAD
-  var dPop = -(G.inf-5)*0.5 - (d.tasa>130?6:d.tasa>90?2:0)
-           + (G.res>14?3:G.res<4?-6:0) + (G.brecha>100?-5:G.brecha<30?3:0)
-           - (G.desemp>12?5:G.desemp>9?2:0);
-  if (ef.pop) dPop+=ef.pop;
-  dPop += (Math.random()-0.5)*4;
-  G.pop = Math.max(0,Math.min(100,G.pop+dPop));
+    // TENSION
+    var dTen=(G.inf>12?7:G.inf>8?2:-4)+(G.res<4?10:G.res<7?3:-3)+(G.brecha>100?6:G.brecha>70?2:-3)+(G.pop<20?8:G.pop<35?3:-2)+ester_ten;
+    if(ef.tension) dTen+=ef.tension;
+    dTen+=(Math.random()-0.5)*4;
+    G.tension=Math.max(0,Math.min(100,G.tension+dTen));
 
-  // TENSION
-  var dTen = (G.inf>12?7:G.inf>8?2:-4) + (G.res<4?10:G.res<7?3:-3)
-           + (G.brecha>100?6:G.brecha>70?2:-3) + (G.pop<20?8:G.pop<35?3:-2)
-           + ester_tension;
-  if (ef.tension) dTen+=ef.tension;
-  dTen += (Math.random()-0.5)*4;
-  G.tension = Math.max(0,Math.min(100,G.tension+dTen));
+    // DESEMPLEO
+    var dDes=(d.tasa>100?(d.tasa-100)*0.008:0)-(d.emision>5?0.3:0)+(G.inf>15?0.3:0)-(G.res>12?0.2:0);
+    if(ef.desemp) dDes+=ef.desemp;
+    dDes+=(Math.random()-0.5)*0.4;
+    G.desemp=Math.max(3,Math.min(40,G.desemp+dDes));
 
-  // DESEMPLEO
-  // Tasa alta = recesion = mas desempleo; inflacion alta = incertidumbre = mas desempleo
-  // Emision alta y reservas acumulando = mas actividad = menos desempleo
-  var dDes = (d.tasa>100?(d.tasa-100)*0.008:0)
-           - (d.emision>5?0.3:0)
-           + (G.inf>15?0.3:0)
-           - (G.res>12?0.2:0);
-  if (ef.desemp) dDes+=ef.desemp;
-  dDes += (Math.random()-0.5)*0.4;
-  G.desemp = Math.max(3,Math.min(40,G.desemp+dDes));
+    // RIESGO PAIS
+    var dRiesgo=(G.tension-50)*8+(G.brecha>80?(G.brecha-80)*3:0)+(G.cred<50?(50-G.cred)*10:0)-(G.res>10?50:0)+(Math.random()-0.5)*80;
+    G.riesgo=Math.max(200,Math.min(4500,(G.riesgo||850)+dRiesgo));
 
-  G.tasa=d.tasa; G.cepo=d.cepo;
-  infHist.push(G.inf); if(infHist.length>16) infHist.shift();
-  resHist.push(G.res); if(resHist.length>16) resHist.shift();
-  desHist.push(G.desemp); if(desHist.length>16) desHist.shift();
+    G.tasa=d.tasa; G.cepo=d.cepo;
+    infHist.push(G.inf); if(infHist.length>16) infHist.shift();
+    resHist.push(G.res); if(resHist.length>16) resHist.shift();
+    desHist.push(G.desemp); if(desHist.length>16) desHist.shift();
 
-  var changes = buildChanges(prev);
-  var ql = 'T'+((G.turn%4)+1)+' '+(G.year+Math.floor(G.turn/4));
-  G.history.unshift({label:ql,hl:ev.hl,changes:changes});
-  G.turn++;
-  if (G.turn%4===0) G.year++;
+    checkDeuda();
 
-  // Reset mesa
-  G.decisions.interv=0;
-  document.getElementById('sl-interv').value=0;
-  document.getElementById('slv-interv').textContent='0B USD';
-  esterMode='no'; setEster('no');
-  updateMesaPreview(0); updateEsterUI();
+    var changes=buildChanges(prev);
+    var ql='T'+((G.turn%4)+1)+' '+(G.year+Math.floor(G.turn/4));
+    G.history.unshift({label:ql,hl:ev.hl,changes:changes});
+    G.turn++;
+    if(G.turn%4===0) G.year++;
 
-  document.getElementById('btn-aj').disabled=false;
-  document.getElementById('btn-ex').disabled=false;
+    // Reset mesa
+    G.decisions.interv=0;
+    document.getElementById('sl-interv').value=0;
+    document.getElementById('slv-interv').textContent='0B USD';
+    setEster('no'); updateMesa(0); updateEsterUI();
 
-  var worse = G.inf>prev.inf+2||G.res<prev.res-1.5||G.tension>prev.tension+12;
-  var better = G.res>prev.res+1||G.pop>prev.pop+6;
-  doFlash(worse?'r':better?'g':null);
+    document.getElementById('btn-aj').disabled=false;
+    document.getElementById('btn-ex').disabled=false;
 
-  if      (G.inf>22)     showAlert('La inflaci\u00f3n exhibe una "correcci\u00f3n t\u00e9cnica acelerada"','#C0392B');
-  else if (G.res<3)      showAlert('Las reservas en niveles "t\u00e9cnicamente ajustados"','#C0392B');
-  else if (G.desemp>15)  showAlert('Desempleo en niveles cr\u00edticos: presi\u00f3n social creciente','#D4841A');
-  else if (G.tension>85) showAlert('Tensi\u00f3n sist\u00e9mica al l\u00edmite','#D4841A');
+    var worse=G.inf>prev.inf+2||G.res<prev.res-1.5||G.tension>prev.tension+12;
+    var better=G.res>prev.res+1||G.pop>prev.pop+6;
+    doFlash(worse?'r':better?'g':null);
 
-  var ms = {4:'Un a\u00f1o al frente del BCRA. El mercado ajusta sus modelos.',8:'Dos a\u00f1os: m\u00e1s que la mayor\u00eda de sus predecesores.',12:'Tres a\u00f1os. V.E. se ha convertido en un activo institucional.',20:'Cinco a\u00f1os. La historia escribi\u00f3 su primer borrador favorable.'};
-  if (ms[G.turn]) showAlert(ms[G.turn],'#C8A040');
+    if(G.inf>22)             showAlert('La inflaci\u00f3n exhibe una "correcci\u00f3n t\u00e9cnica acelerada"','#C0392B');
+    else if(G.res<3)         showAlert('Las reservas en niveles "t\u00e9cnicamente ajustados"','#C0392B');
+    else if(G.desemp>15)     showAlert('Desempleo en niveles cr\u00edticos: presi\u00f3n social creciente','#D4841A');
+    else if(G.tension>85)    showAlert('Tensi\u00f3n sist\u00e9mica al l\u00edmite','#D4841A');
+    else if(G.riesgo>2000)   showAlert('EMBI+ supera 2000bps: Argentina en zona de default t\u00e9cnico','#C0392B');
+    else if(G.riesgo>1200)   showAlert('Riesgo pa\u00eds en alza: mercados descuentan reestructuraci\u00f3n','#D4841A');
 
-  // Comunicado cada 2 turnos
-  if (G.turn>0 && G.turn%2===0 && !pendingComunicado) {
-    setTimeout(showComunicadoModal, 400);
-  }
+    var ms={4:'Un a\u00f1o al frente del BCRA.',8:'Dos a\u00f1os: m\u00e1s que la mayor\u00eda de sus predecesores.',12:'Tres a\u00f1os. V.E. se ha convertido en un activo institucional.',20:'Cinco a\u00f1os. La historia escribi\u00f3 su primer borrador favorable.'};
+    if(ms[G.turn]) showAlert(ms[G.turn],'#C8A040');
 
-  for (var i=0;i<ENDINGS.length;i++){
-    if (ENDINGS[i].cond(G)&&ENDINGS[i].lose){
-      G.lost=true;
-      setTimeout((function(end){return function(){showEnding(end);};})(ENDINGS[i]),700);
-      return;
+    // Comunicado cada 2 turnos
+    if(G.turn>0&&G.turn%2===0&&!pendingCom) setTimeout(showComModal,400);
+
+    // Elecciones
+    if(G.turn===8)  setTimeout(function(){runEleccion('legislativa');},600);
+    if(G.turn===16) setTimeout(function(){runEleccion('presidencial');},600);
+
+    // Game over
+    for(var i=0;i<3;i++){
+      var ends=[
+        {c:G.inf>=30,  icon:'\uD83D\uDD25',type:'Fin Catastr\u00f3fico',title:'HIPERINFLACI\u00d3N',color:'#C0392B',nar:'Los precios se actualizan cada hora. El peso experimenta una <strong>correcci\u00f3n t\u00e9cnica terminal</strong>.'},
+        {c:G.tension>=98,icon:'\uD83D\uDCA3',type:'Colapso Sist\u00e9mico',title:'TRANSICI\u00d3N ORDENADA',color:'#C0392B',nar:'La tensi\u00f3n acumulada super\u00f3 el umbral de ruptura. El organismo dispuso una <strong>transici\u00f3n ordenada</strong>. El mercado la llama de otra manera.'},
+        {c:G.desemp>=20,icon:'\uD83D\uDCC9',type:'Crisis Social',title:'COLAPSO DEL EMPLEO',color:'#C0392B',nar:'El desempleo super\u00f3 el 20%. El costo social result\u00f3 <strong>pol\u00edticamente insostenible</strong>.'},
+      ];
+      if(ends[i].c){ setTimeout((function(e){return function(){showEnding(e);};})(ends[i]),700); return; }
     }
-  }
 
-  loadEvent();
-  renderAll();
-  genContextTweets();
-  document.getElementById('btn-confirm').disabled=false;
+    loadEvent();
+    renderResumen(prev);
+    renderAll();
+    genCtxTweets();
+
+    // Mobile: switch to Noticias tab after confirming
+    if(window.innerWidth<=768) switchTab('col-news');
+
+  } catch(err){ console.log('Turn error:',err.message); }
+  this.disabled=false;
 });
 
 function buildChanges(prev){
-  var items=[];
-  var di=G.inf-prev.inf,dr=G.res-prev.res,dp=G.pop-prev.pop,db=G.brecha-prev.brecha,dd=G.desemp-prev.desemp;
+  var items=[],di=G.inf-prev.inf,dr=G.res-prev.res,dp=G.pop-prev.pop,db=G.brecha-prev.brecha,dd=G.desemp-prev.desemp;
   if(Math.abs(di)>0.3) items.push({lbl:'Inf '+(di>0?'+':'')+di.toFixed(1)+'%',cls:di>0?'dn':'up'});
   if(Math.abs(dr)>0.2) items.push({lbl:'Res '+(dr>0?'+':'')+dr.toFixed(1)+'B',cls:dr>0?'up':'dn'});
   if(Math.abs(dp)>2)   items.push({lbl:'Pop '+(dp>0?'+':'')+dp.toFixed(0)+'%',cls:dp>0?'up':'dn'});
@@ -962,48 +1189,39 @@ function buildChanges(prev){
   return items;
 }
 
-// ── RENDER ────────────────────────────────────────────────────────────────────
+// ═══ RENDER ══════════════════════════════════════════════════════════════════
+
 function renderAll(){
-  var q=G.turn%4, y=G.year+Math.floor(G.turn/4), yrs=(G.turn/4).toFixed(1);
+  var q=G.turn%4,y=G.year+Math.floor(G.turn/4),yrs=(G.turn/4).toFixed(1);
   document.getElementById('hdr-date').textContent=QTRS[q]+' '+y;
   document.getElementById('hdr-turn').textContent='T-'+(G.turn+1)+' \u2014 '+yrs+' a\u00f1os';
   document.getElementById('dec-bdg').textContent='T-'+(G.turn+1);
   document.getElementById('soc-turn').textContent='T-'+(G.turn+1);
   var cd=G.turn-G.fiscalLast;
   document.getElementById('fiscal-cd').textContent=cd<2?'Disponible en '+(2-cd)+' trimestre(s)':'Solicitud disponible';
-  renderKPIs(); renderTension(); renderTicker(); renderCharts(); renderLog(); updateMesaKPIs();
+  renderKPIs(); renderTension(); renderTicker(); renderCharts(); renderLog(); updateMesaKPIs(); renderDeuda();
 }
 
 function renderKPIs(){
-  var inf=isNaN(G.inf)?0:G.inf, res=isNaN(G.res)?0:G.res;
-  var dol=isNaN(G.dolar)?0:G.dolar, br=isNaN(G.brecha)?0:G.brecha;
-  var tna=isNaN(G.tasa)?0:G.tasa, pop=isNaN(G.pop)?0:G.pop;
-  var des=isNaN(G.desemp)?0:G.desemp, cred=isNaN(G.credibilidad)?70:G.credibilidad;
   var data=[
-    {nm:'Inflaci\u00f3n Mensual',v:inf.toFixed(1)+'%',s:inf<5?'Desinflaci\u00f3n activa':inf<12?'Din\u00e1mica elevada':'Riesgo hiperinflacionario',c:inf<5?'ok':inf<12?'wn':'bd'},
-    {nm:'Reservas Netas',v:'USD '+res.toFixed(1)+'B',s:res>8?'Posici\u00f3n confortable':'Niveles ajustados',c:res>8?'ok':res>3?'wn':'bd'},
-    {nm:'Brecha Cambiaria',v:Math.round(br)+'%',s:'Blue vs. Oficial',c:br<30?'ok':br<80?'wn':'bd'},
-    {nm:'Tasa TNA',v:tna+'%',s:tna<20?'Expansiva extrema':tna>130?'Nivel recesivo':'Pol\u00edtica monetaria',c:tna<20?'bd':tna>70&&tna<140?'wn':'bd'},
-    {nm:'Desempleo',v:des.toFixed(1)+'%',s:des<8?'Pleno empleo':des<12?'Moderado':'Cr\u00edtico',c:des<8?'ok':des<12?'wn':'bd'},
-    {nm:'Imagen Inst.',v:Math.round(pop)+'%',s:pop>50?'Gesti\u00f3n con respaldo':'Riesgo pol\u00edtico',c:pop>50?'ok':pop>25?'wn':'bd'},
-    {nm:'Credibilidad',v:Math.round(cred)+'%',s:cred>70?'Alta':'Expectativas desancladas',c:cred>70?'ok':cred>40?'wn':'bd'},
+    {nm:'Inflaci\u00f3n Mensual',v:G.inf.toFixed(1)+'%',s:G.inf<5?'Desinflaci\u00f3n activa':G.inf<12?'Din\u00e1mica elevada':'Riesgo hiperinflacionario',c:G.inf<5?'ok':G.inf<12?'wn':'bd'},
+    {nm:'Reservas Netas',v:'USD '+G.res.toFixed(1)+'B',s:G.res>8?'Posici\u00f3n confortable':G.res>3?'Niveles ajustados':'Cr\u00edtico',c:G.res>8?'ok':G.res>3?'wn':'bd'},
+    {nm:'Brecha Cambiaria',v:Math.round(G.brecha)+'%',s:'Blue vs. Oficial',c:G.brecha<30?'ok':G.brecha<80?'wn':'bd'},
+    {nm:'Tasa TNA',v:G.tasa+'%',s:G.tasa<20?'Expansiva extrema':G.tasa>130?'Nivel recesivo':'Pol\u00edtica monetaria',c:G.tasa<20?'bd':G.tasa>70&&G.tasa<140?'wn':'bd'},
+    {nm:'Desempleo',v:G.desemp.toFixed(1)+'%',s:G.desemp<8?'Pleno empleo':G.desemp<12?'Moderado':'Cr\u00edtico',c:G.desemp<8?'ok':G.desemp<12?'wn':'bd'},
+    {nm:'Imagen Inst.',v:Math.round(G.pop)+'%',s:G.pop>50?'Gesti\u00f3n con respaldo':'Riesgo pol\u00edtico',c:G.pop>50?'ok':G.pop>25?'wn':'bd'},
+    {nm:'Credibilidad',v:Math.round(G.cred)+'%',s:G.cred>70?'Alta':'Expectativas desancladas',c:G.cred>70?'ok':G.cred>40?'wn':'bd'},
+    {nm:'Riesgo Pa\u00eds EMBI+',v:Math.round(G.riesgo)+'bps',s:'Spread soberano',c:G.riesgo<600?'ok':G.riesgo<1500?'wn':'bd'},
   ];
   var html='';
-  for(var i=0;i<data.length;i++){
-    var k=data[i];
-    html+='<div class="kpi '+k.c+'"><div class="kpi-nm">'+k.nm+'</div><div class="kpi-v '+k.c+'">'+k.v+'</div><div class="kpi-s">'+k.s+'</div></div>';
-  }
+  data.forEach(function(k){ html+='<div class="kpi '+k.c+'"><div class="kpi-nm">'+k.nm+'</div><div class="kpi-v '+k.c+'">'+k.v+'</div><div class="kpi-s">'+k.s+'</div></div>'; });
   document.getElementById('kpi-list').innerHTML=html;
 }
 
 function renderTension(){
   var t=G.tension;
-  var fill=document.getElementById('ten-fill');
-  fill.style.width=t+'%';
-  fill.style.background=t<40?'#1E7840':t<65?'#D4841A':'#C0392B';
-  var pct=document.getElementById('ten-pct');
-  pct.textContent=Math.round(t)+'%';
-  pct.style.color=t<40?'#6fcf97':t<65?'#f2994a':'#eb5757';
+  var f=document.getElementById('ten-fill'); f.style.width=t+'%'; f.style.background=t<40?'#1E7840':t<65?'#D4841A':'#C0392B';
+  var p=document.getElementById('ten-pct'); p.textContent=Math.round(t)+'%'; p.style.color=t<40?'#6fcf97':t<65?'#f2994a':'#eb5757';
 }
 
 function renderTicker(){
@@ -1014,14 +1232,12 @@ function renderTicker(){
     {l:'TASA TNA',v:G.tasa+'%',c:'tw'},
     {l:'DESEMPLEO',v:G.desemp.toFixed(1)+'%',c:G.desemp>15?'tr':G.desemp>10?'tw':'tg'},
     {l:'IMAGEN',v:Math.round(G.pop)+'%',c:G.pop<25?'tr':G.pop>55?'tg':'tw'},
-    {l:'CREDIBILIDAD',v:Math.round(G.credibilidad)+'%',c:G.credibilidad<40?'tr':G.credibilidad>70?'tg':'tw'},
+    {l:'CREDIBILIDAD',v:Math.round(G.cred)+'%',c:G.cred<40?'tr':G.cred>70?'tg':'tw'},
+    {l:'EMBI+',v:Math.round(G.riesgo)+'bps',c:G.riesgo>1500?'tr':G.riesgo<600?'tg':'tw'},
     {l:'TENSION',v:Math.round(G.tension)+'%',c:G.tension>70?'tr':'tw'},
   ];
-  var doubled=items.concat(items);
-  var html='';
-  for(var i=0;i<doubled.length;i++){
-    html+='<span class="ti"><span class="tl">'+doubled[i].l+'</span><span class="tv '+doubled[i].c+'">'+doubled[i].v+'</span></span>';
-  }
+  var d=items.concat(items), html='';
+  d.forEach(function(i){ html+='<span class="ti"><span class="tl">'+i.l+'</span><span class="tv '+i.c+'">'+i.v+'</span></span>'; });
   document.getElementById('ticker-inner').innerHTML=html;
 }
 
@@ -1034,135 +1250,136 @@ function renderCharts(){
 function drawSpark(id,data,cl,cd){
   var canvas=document.getElementById(id);
   if(!canvas||data.length<2) return;
-  var ctx=canvas.getContext('2d');
-  var W=canvas.offsetWidth||180, H=44;
-  canvas.width=W; canvas.height=H;
-  ctx.clearRect(0,0,W,H);
-  var mn=Math.min.apply(null,data)*0.9, mx=Math.max.apply(null,data)*1.1;
-  var rng=mx-mn||1;
-  var pts=[];
-  for(var i=0;i<data.length;i++) pts.push({x:(i/(data.length-1))*(W-4)+2,y:H-4-((data[i]-mn)/rng)*(H-8)});
+  var ctx=canvas.getContext('2d'), W=canvas.offsetWidth||180, H=44;
+  canvas.width=W; canvas.height=H; ctx.clearRect(0,0,W,H);
+  var mn=Math.min.apply(null,data)*0.9, mx=Math.max.apply(null,data)*1.1, rng=mx-mn||1;
+  var pts=data.map(function(v,i){return{x:(i/(data.length-1))*(W-4)+2,y:H-4-((v-mn)/rng)*(H-8)};});
   ctx.beginPath(); ctx.strokeStyle=cl; ctx.lineWidth=1.5;
-  for(var j=0;j<pts.length;j++){if(j===0)ctx.moveTo(pts[j].x,pts[j].y);else ctx.lineTo(pts[j].x,pts[j].y);}
-  ctx.stroke();
+  pts.forEach(function(p,i){i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y);}); ctx.stroke();
   ctx.beginPath(); ctx.fillStyle=cl+'20';
-  ctx.moveTo(pts[0].x,H);
-  for(var k=0;k<pts.length;k++) ctx.lineTo(pts[k].x,pts[k].y);
-  ctx.lineTo(pts[pts.length-1].x,H); ctx.closePath(); ctx.fill();
-  var lp=pts[pts.length-1];
-  ctx.beginPath(); ctx.arc(lp.x,lp.y,3,0,Math.PI*2); ctx.fillStyle=cd; ctx.fill();
+  ctx.moveTo(pts[0].x,H); pts.forEach(function(p){ctx.lineTo(p.x,p.y);}); ctx.lineTo(pts[pts.length-1].x,H); ctx.closePath(); ctx.fill();
+  var lp=pts[pts.length-1]; ctx.beginPath(); ctx.arc(lp.x,lp.y,3,0,Math.PI*2); ctx.fillStyle=cd; ctx.fill();
+}
+
+function addTweet(av,nm,hd,tx,lk,isCom){
+  var d=document.createElement('div'); d.className='tw'+(isCom?' com':'');
+  d.innerHTML='<div class="tw-hdr"><div class="tw-av">'+av+'</div><div><div class="tw-nm">'+nm+'</div><div class="tw-hd">'+hd+'</div></div></div><div class="tw-bd">'+tx+'</div><div class="tw-lk">\u2665 '+lk+'</div>';
+  var t=document.getElementById('tweets'); t.insertBefore(d,t.firstChild);
 }
 
 function renderTweets(list){
+  if(!list||!list.length) return;
   var html='';
-  for(var i=0;i<list.length;i++){
-    var t=list[i];
-    html+='<div class="tw"><div class="tw-hdr"><div class="tw-av">'+t.av+'</div><div><div class="tw-nm">'+t.nm+'</div><div class="tw-hd">'+t.hd+'</div></div></div><div class="tw-bd">'+t.tx+'</div><div class="tw-lk">\u2665 '+t.lk.toLocaleString('es-AR')+'</div></div>';
-  }
+  list.forEach(function(t){ html+='<div class="tw"><div class="tw-hdr"><div class="tw-av">'+t.av+'</div><div><div class="tw-nm">'+t.nm+'</div><div class="tw-hd">'+t.hd+'</div></div></div><div class="tw-bd">'+t.tx+'</div><div class="tw-lk">\u2665 '+t.lk.toLocaleString('es-AR')+'</div></div>'; });
   document.getElementById('tweets').innerHTML=html;
 }
 
-function genContextTweets(){
+function genCtxTweets(){
   var pool=[];
-  if(G.inf>15) pool=pool.concat(CTXT_TWEETS.inf_alta);
-  if(G.res<4)  pool=pool.concat(CTXT_TWEETS.res_bajas);
-  if(G.pop<25) pool=pool.concat(CTXT_TWEETS.pop_baja);
-  if(G.desemp>13) pool=pool.concat(CTXT_TWEETS.desemp_alto);
-  if(G.inf<6&&G.res>8) pool=pool.concat(CTXT_TWEETS.buena);
-  if(pool.length>0) renderTweets(pool.slice(0,2));
+  if(G.inf>15) pool=pool.concat(CTX_TWEETS.inf_alta);
+  if(G.res<4)  pool=pool.concat(CTX_TWEETS.res_bajas);
+  if(G.pop<25) pool=pool.concat(CTX_TWEETS.pop_baja);
+  if(G.desemp>13) pool=pool.concat(CTX_TWEETS.desemp_alt);
+  if(G.inf<6&&G.res>8) pool=pool.concat(CTX_TWEETS.buena);
+  if(pool.length) renderTweets(pool.slice(0,2));
 }
 
 function renderLog(){
   var html='';
-  var entries=G.history.slice(0,6);
-  for(var i=0;i<entries.length;i++){
-    var h=entries[i];
-    var tags='';
-    for(var j=0;j<h.changes.length;j++) tags+='<span class="ltag '+h.changes[j].cls+'">'+h.changes[j].lbl+'</span>';
+  G.history.slice(0,6).forEach(function(h){
+    var tags=''; h.changes.forEach(function(c){tags+='<span class="ltag '+c.cls+'">'+c.lbl+'</span>';});
     html+='<div class="le"><div class="le-q">'+h.label+'</div><div class="le-ev">'+h.hl+'</div><div class="le-tags">'+tags+'</div></div>';
-  }
+  });
   document.getElementById('log').innerHTML=html;
 }
 
-// ── ENDING ────────────────────────────────────────────────────────────────────
+// ═══ ENDING ══════════════════════════════════════════════════════════════════
+
 function showEnding(e){
   document.getElementById('e-icon').textContent=e.icon;
   document.getElementById('e-type').textContent=e.type;
   document.getElementById('e-title').textContent=e.title;
   document.getElementById('e-title').style.color=e.color;
-  var nar = e.nar;
-  if (e.title==='HIPERINFLACI\u00d3N') nar += G.desemp.toFixed(1)+'%.</strong>';
-  document.getElementById('e-nar').innerHTML=nar;
-  var ic=G.inf<6?'vg':G.inf<15?'vw':'vr';
-  var rc=G.res>8?'vg':G.res>2?'vw':'vr';
-  var pc=G.pop>50?'vg':G.pop>25?'vw':'vr';
-  var dc=G.desemp<8?'vg':G.desemp<14?'vw':'vr';
+  document.getElementById('e-nar').innerHTML=e.nar;
+  var ic=G.inf<6?'vg':G.inf<15?'vw':'vr', rc=G.res>8?'vg':G.res>2?'vw':'vr', dc=G.desemp<8?'vg':G.desemp<14?'vw':'vr';
   document.getElementById('e-stats').innerHTML=
     '<div class="e-stat"><div class="e-slbl">Inflaci\u00f3n</div><div class="e-sval '+ic+'">'+G.inf.toFixed(1)+'%</div></div>'+
     '<div class="e-stat"><div class="e-slbl">Reservas</div><div class="e-sval '+rc+'">USD '+G.res.toFixed(1)+'B</div></div>'+
     '<div class="e-stat"><div class="e-slbl">Desempleo</div><div class="e-sval '+dc+'">'+G.desemp.toFixed(1)+'%</div></div>'+
     '<div class="e-stat"><div class="e-slbl">Tiempo</div><div class="e-sval vn">'+(G.turn/4).toFixed(1)+' a\u00f1os</div></div>';
-  showScreen('screen-end');
+  showScreen('s-end');
 }
 
-// ── UTILS ─────────────────────────────────────────────────────────────────────
+// ═══ UTILS ═══════════════════════════════════════════════════════════════════
+
 function showScreen(id){
-  var ss=document.querySelectorAll('.screen');
-  for(var i=0;i<ss.length;i++) ss[i].classList.remove('active');
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
   document.getElementById(id).classList.add('active');
 }
+
 function doFlash(type){
   if(!type) return;
-  var el=document.createElement('div');
-  el.className='flash flash-'+type;
-  document.body.appendChild(el);
-  setTimeout(function(){el.parentNode&&el.parentNode.removeChild(el);},520);
-}
-function showAlert(msg,color){
-  var old=document.querySelector('.alert');
-  if(old&&old.parentNode) old.parentNode.removeChild(old);
-  var el=document.createElement('div');
-  el.className='alert';
-  el.style.background=color||'#C0392B';
-  el.textContent=msg;
-  document.body.appendChild(el);
-  setTimeout(function(){el.parentNode&&el.parentNode.removeChild(el);},3500);
+  var el=document.createElement('div'); el.className='flash flash-'+type;
+  document.body.appendChild(el); setTimeout(function(){el.parentNode&&el.parentNode.removeChild(el);},520);
 }
 
-// ── INIT ──────────────────────────────────────────────────────────────────────
+function showAlert(msg,color){
+  var old=document.querySelector('.alert'); if(old&&old.parentNode) old.parentNode.removeChild(old);
+  var el=document.createElement('div'); el.className='alert'; el.style.background=color||'#C0392B'; el.textContent=msg;
+  document.body.appendChild(el); setTimeout(function(){el.parentNode&&el.parentNode.removeChild(el);},3500);
+}
+
+function switchTab(targetId){
+  var cols=['col-left','col-news','col-dec','col-social'];
+  cols.forEach(function(id){ var el=document.getElementById(id); if(el) el.classList.toggle('tab-active',id===targetId); });
+  document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.toggle('active',b.getAttribute('data-tab')===targetId); });
+}
+
+// ═══ INIT ════════════════════════════════════════════════════════════════════
+
+// Start button
 document.getElementById('btn-start').onclick = function(e){ e.preventDefault(); startGame(); return false; };
-document.getElementById('btn-new').addEventListener('click',startGame);
-document.getElementById('btn-mnu').addEventListener('click',function(){showScreen('screen-intro');});
-document.getElementById('btn-aj').addEventListener('click',function(){pedirReforma('ajuste');});
-document.getElementById('btn-ex').addEventListener('click',function(){pedirReforma('expansion');});
-document.getElementById('btn-modal').addEventListener('click',function(){document.getElementById('modal').classList.remove('open');renderAll();});
-document.getElementById('btn-emit-com').addEventListener('click',emitirComunicado);
-document.getElementById('btn-skip-com').addEventListener('click',skipComunicado);
-document.getElementById('ester-letras').addEventListener('click',function(){setEster('letras');});
-document.getElementById('ester-bonos').addEventListener('click',function(){setEster('bonos');});
-document.getElementById('ester-no').addEventListener('click',function(){setEster('no');});
-document.getElementById('sl-interv').addEventListener('input',function(){
-  var v=parseFloat(this.value);
-  if(isNaN(v)) v=0;
+
+// Tipo selector
+document.querySelectorAll('.btn-tipo').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('.btn-tipo').forEach(function(b){b.classList.remove('sel');});
+    btn.classList.add('sel');
+    selectedTipo = TIPOS[btn.getAttribute('data-tipo')] || TIPOS.moderado;
+  });
+});
+
+// Game buttons
+document.getElementById('btn-new').addEventListener('click', startGame);
+document.getElementById('btn-mnu').addEventListener('click', function(){ showScreen('s-intro'); });
+document.getElementById('btn-modal').addEventListener('click', function(){ document.getElementById('modal').classList.remove('open'); renderAll(); });
+document.getElementById('btn-aj').addEventListener('click', function(){ pedirFiscal('ajuste'); });
+document.getElementById('btn-ex').addEventListener('click', function(){ pedirFiscal('expansion'); });
+document.getElementById('btn-emit').addEventListener('click', emitirCom);
+document.getElementById('btn-skip').addEventListener('click', skipCom);
+document.getElementById('btn-elec').addEventListener('click', function(){ document.getElementById('elec-ov').classList.remove('open'); renderAll(); });
+document.getElementById('btn-d-tomar').addEventListener('click', tomarDeuda);
+document.getElementById('btn-d-pagar').addEventListener('click', pagarCuota);
+
+// Esterilizacion
+document.getElementById('btn-esl').addEventListener('click', function(){ setEster('letras'); });
+document.getElementById('btn-esb').addEventListener('click', function(){ setEster('bonos'); });
+document.getElementById('btn-esn').addEventListener('click', function(){ setEster('no'); });
+
+// Mesa slider
+document.getElementById('sl-interv').addEventListener('input', function(){
+  var v=parseFloat(this.value)||0;
   G.decisions.interv=v;
   document.getElementById('slv-interv').textContent=(v>0?'+':'')+v+'B USD';
-  updateMesaPreview(v);
-  updateEsterUI();
+  updateMesa(v); updateEsterUI();
+});
+
+// Mobile tabs
+document.querySelectorAll('.tab-btn').forEach(function(btn){
+  btn.addEventListener('click', function(){ switchTab(btn.getAttribute('data-tab')); });
 });
 
 })();
-
-// Global scope - needed for dynamic HTML event handlers
-function selectComunicado(btn, idx) {
-  var btns = document.querySelectorAll('.btn-com');
-  for (var i=0; i<btns.length; i++) btns[i].classList.remove('selected');
-  btn.classList.add('selected');
-  var opts = document.getElementById('com-opts')._opts;
-  if (opts && opts[idx]) {
-    // Store in a global var that the IIFE can read
-    window._selectedComunicado = opts[idx];
-  }
-}
 </script>
 </body>
 </html>
